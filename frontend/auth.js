@@ -1,4 +1,4 @@
-const loginBtn = document.getElementById("loginOpen");
+const loginOpenBtn = document.getElementById("loginOpen");
 const modal = document.getElementById("loginModal");
 const closeBtn = document.getElementById("closeLogin");
 
@@ -7,7 +7,7 @@ const loginActionBtn = document.getElementById("loginBtn");
 
 // ---------- OPEN ----------
 
-loginBtn.addEventListener("click", () => {
+loginOpenBtn.addEventListener("click", () => {
 
     modal.style.display = "flex";
 
@@ -96,8 +96,9 @@ loginActionBtn.addEventListener("click", async () => {
 
         // Міняємо кнопку
 
-        loginBtn.innerHTML = "👤 " + data.user.username;
+loginOpenBtn.style.display = "none";
 
+renderProfileMenu(data.user.username);
         // Закриваємо модалку
 
         modal.style.display = "none";
