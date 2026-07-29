@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notes | Den1mteN Space</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* 🌌 BACKGROUND */
+.bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-image: url('/images/den.jpg');
+    background-size: cover;
+    background-position: center;
+
+    z-index: -3;
+}
+
+/* 🌑 DARK */
+.bg-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.76);
+
+    z-index: -2;
+}
+
+/* ✨ GLOW */
+.glow {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+
+    background:
+        radial-gradient(circle at center,
+        rgba(0,229,255,0.08),
+        transparent 60%);
+
+    z-index: -1;
+}
+
+/* 🧠 BRAND */
+.brand {
+    position: absolute;
+    top: 18px;
+    left: 25px;
+}
+
+.brand h1 {
+    margin: 0;
+
+    font-size: 22px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #00e5ff,
+            #ffffff
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand p {
+    margin: 0;
+
+    color: #00e5ff;
+
+    font-size: 12px;
+}
+
+/* 🧭 MENU */
+.top-menu {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+}
+
+.top-menu a {
+
+    color: white;
+
+    text-decoration: none;
+
+    margin-left: 18px;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+}
+
+.top-menu a:hover {
+    color: #00e5ff;
+}
+
+/* 📦 CONTAINER */
+.container {
+
+    max-width: 1300px;
+
+    margin: auto;
+
+    padding-top: 120px;
+    padding-bottom: 60px;
+}
+
+/* 🌌 HERO */
+.hero {
+
+    background: rgba(255,255,255,0.06);
+
+    border-radius: 24px;
+
+    padding: 35px;
+
+    backdrop-filter: blur(12px);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    margin-bottom: 35px;
+}
+
+.hero h2 {
+
+    margin-top: 0;
+
+    font-size: 42px;
+
+    color: #00e5ff;
+}
+
+.hero p {
+
+    color: #cccccc;
+
+    line-height: 1.8;
+}
+
+/* 🫧 GRID */
+.dashboard {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 30px;
+}
+
+/* 📦 BLOCK */
+.block {
+
+    background: rgba(255,255,255,0.06);
+
+    border-radius: 24px;
+
+    padding: 28px;
+
+    backdrop-filter: blur(12px);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 0 20px rgba(0,0,0,0.2);
+}
+
+/* ✨ HOVER */
+.block:hover {
+
+    box-shadow:
+        0 0 28px rgba(0,229,255,0.12);
+}
+
+/* 📝 TASK */
+.task {
+
+    padding: 16px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.04);
+
+    margin-bottom: 14px;
+
+    border-left:
+        3px solid #00e5ff;
+}
+
+/* TASK TEXT */
+.task strong {
+    color: #00e5ff;
+}
+
+/* 📅 CALENDAR */
+.calendar {
+
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+/* DAY */
+.day {
+
+    aspect-ratio: 1/1;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,0.05);
+
+    transition: 0.2s;
+}
+
+/* ACTIVE DAY */
+.active-day {
+
+    background:
+        rgba(0,229,255,0.18);
+
+    border:
+        1px solid rgba(0,229,255,0.35);
+}
+
+/* HOVER */
+.day:hover {
+
+    transform: scale(1.05);
+
+    box-shadow:
+        0 0 15px rgba(0,229,255,0.2);
+}
+
+/* 🎯 GOALS */
+.goal {
+
+    margin-bottom: 18px;
+}
+
+/* PROGRESS */
+.progress {
+
+    height: 12px;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background: rgba(255,255,255,0.08);
+
+    margin-top: 8px;
+}
+
+/* BAR */
+.bar {
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00e5ff,
+            #00ffaa
+        );
+}
+
+/* 🌙 STATUS */
+.status {
+
+    color: #00e5ff;
+
+    margin-top: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="bg-overlay"></div>
+<div class="glow"></div>
+
+<!-- 🧠 BRAND -->
+<div class="brand">
+
+    <h1>Den1mteN</h1>
+
+    <p>
+        space • music • thoughts • notes • eFootball
+    </p>
+
+</div>
+
+<!-- 🧭 MENU -->
+<div class="top-menu">
+
+    <a href="/">Home</a>
+    <a href="/music.html">Music</a>
+    <a href="/blog.html">Blog</a>
+    <a href="/healthy.html">Healthy</a>
+    <a href="/efootball.html">eFootball</a>
+    <a href="/notes.html">Notes</a>
+
+</div>
+
+<!-- 📦 CONTENT -->
+<div class="container">
+
+    <!-- 🌌 HERO -->
+    <div class="hero">
+
+        <h2>
+            Personal Control Center
+        </h2>
+
+        <p>
+            Tasks • reminders • planning • goals • focus • atmosphere
+        </p>
+
+    </div>
+
+    <!-- 🫧 GRID -->
+    <div class="dashboard">
+
+        <!-- 📝 TASKS -->
+        <div class="block">
+
+            <h2>📝 Tasks</h2>
+
+            <div class="task">
+                <strong>finish music page</strong><br>
+                improve atmosphere & visuals
+            </div>
+
+            <div class="task">
+                <strong>work on authentication</strong><br>
+                backend stage later
+            </div>
+
+            <div class="task">
+                <strong>record demo track</strong><br>
+                creative night session
+            </div>
+
+        </div>
+
+        <!-- 📅 CALENDAR -->
+        <div class="block">
+
+            <h2>📅 Calendar</h2>
+
+            <div class="calendar">
+
+                <div class="day">1</div>
+                <div class="day">2</div>
+                <div class="day">3</div>
+                <div class="day active-day">4</div>
+                <div class="day">5</div>
+                <div class="day">6</div>
+                <div class="day">7</div>
+
+                <div class="day">8</div>
+                <div class="day">9</div>
+                <div class="day">10</div>
+                <div class="day">11</div>
+                <div class="day active-day">12</div>
+                <div class="day">13</div>
+                <div class="day">14</div>
+
+            </div>
+
+        </div>
+
+        <!-- 🎯 GOALS -->
+        <div class="block">
+
+            <h2>🎯 Goals</h2>
+
+            <div class="goal">
+
+                Website atmosphere
+
+                <div class="progress">
+                    <div class="bar" style="width:70%"></div>
+                </div>
+
+            </div>
+
+            <div class="goal">
+
+                Blog system
+
+                <div class="progress">
+                    <div class="bar" style="width:55%"></div>
+                </div>
+
+            </div>
+
+            <div class="goal">
+
+                Authentication
+
+                <div class="progress">
+                    <div class="bar" style="width:20%"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 🌙 STATUS -->
+        <div class="block">
+
+            <h2>🌙 Current Status</h2>
+
+            <p class="status">
+                late night coding mode active
+            </p>
+
+            <p>
+                Current focus:
+                creating atmosphere and identity
+                for Den1mteN Space.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

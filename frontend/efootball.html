@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>eFootball | Den1mteN Space</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    color:white;
+    overflow-x:hidden;
+    background:black;
+}
+
+/* 🌌 BACKGROUND */
+
+.bg{
+    position:fixed;
+    inset:0;
+
+    background-image:url('/images/den.jpg');
+    background-size:cover;
+    background-position:center;
+
+    transform:scale(1.05);
+
+    z-index:-5;
+
+    animation:bgMove 20s ease-in-out infinite alternate;
+}
+
+@keyframes bgMove{
+
+    from{
+        transform:scale(1.05) translateX(0px);
+    }
+
+    to{
+        transform:scale(1.09) translateX(-10px);
+    }
+}
+
+/* 🌑 OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+
+    background:
+    linear-gradient(
+        rgba(0,0,0,0.72),
+        rgba(0,0,0,0.92)
+    );
+
+    z-index:-4;
+}
+
+/* ✨ GLOW */
+
+.glow{
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(
+        circle at center,
+        rgba(0,229,255,0.12),
+        transparent 65%
+    );
+
+    z-index:-3;
+
+    animation:pulse 5s infinite;
+}
+
+@keyframes pulse{
+
+    0%{opacity:0.45;}
+    50%{opacity:1;}
+    100%{opacity:0.45;}
+}
+
+/* 🧠 BRAND */
+
+.brand{
+    position:absolute;
+    top:18px;
+    left:25px;
+}
+
+.brand h1{
+
+    margin:0;
+
+    font-size:24px;
+
+    letter-spacing:2px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ffffff,
+        #00e5ff,
+        #ffffff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.brand p{
+
+    margin:0;
+
+    color:#00e5ff;
+
+    font-size:12px;
+
+    letter-spacing:1px;
+}
+
+/* 🧭 MENU */
+
+.top-menu{
+
+    position:absolute;
+
+    top:20px;
+    right:25px;
+}
+
+.top-menu a{
+
+    color:white;
+
+    text-decoration:none;
+
+    margin-left:18px;
+
+    font-weight:bold;
+
+    transition:0.25s;
+}
+
+.top-menu a:hover{
+
+    color:#00e5ff;
+
+    text-shadow:0 0 10px #00e5ff;
+}
+
+/* 📦 CONTENT */
+
+.container{
+
+    max-width:1380px;
+
+    margin:auto;
+
+    padding-top:130px;
+    padding-bottom:80px;
+}
+
+/* 🎬 HERO */
+
+.hero{
+
+    display:flex;
+
+    gap:30px;
+
+    align-items:center;
+
+    margin-bottom:45px;
+}
+
+.hero-video{
+
+    width:500px;
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    border:
+    1px solid rgba(0,229,255,0.20);
+
+    box-shadow:
+    0 0 40px rgba(0,229,255,0.14);
+}
+
+.hero-video video{
+
+    width:100%;
+    height:290px;
+
+    object-fit:cover;
+
+    display:block;
+
+    background:black;
+}
+
+.hero-info{
+
+    flex:1;
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:30px;
+
+    padding:36px;
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    backdrop-filter:blur(12px);
+}
+
+.hero-info h2{
+
+    margin-top:0;
+
+    color:#00e5ff;
+
+    font-size:46px;
+}
+
+.hero-info p{
+
+    color:#dddddd;
+
+    line-height:2;
+
+    font-size:18px;
+}
+
+/* 📦 CARD */
+
+.card{
+
+    margin-top:35px;
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:28px;
+
+    padding:30px;
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    backdrop-filter:blur(12px);
+
+    transition:0.3s;
+}
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 0 30px rgba(0,229,255,0.12);
+}
+
+/* ⚽ PLAYER */
+
+.player-box{
+
+    display:flex;
+
+    gap:30px;
+
+    align-items:center;
+}
+
+.player-image{
+
+    width:260px;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    border:
+    1px solid rgba(0,229,255,0.18);
+}
+
+.player-image img{
+
+    width:100%;
+
+    display:block;
+}
+
+.player-info h2{
+
+    color:#00e5ff;
+
+    font-size:40px;
+
+    margin-top:0;
+}
+
+.player-info p{
+
+    color:#dddddd;
+
+    line-height:2;
+}
+
+/* 🎬 MAIN VIDEO */
+
+.main-video-player{
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    margin-top:20px;
+}
+
+.main-video-player video{
+
+    width:100%;
+
+    height:520px;
+
+    object-fit:cover;
+
+    display:block;
+
+    background:black;
+}
+
+.video-title{
+
+    color:#00e5ff;
+
+    font-size:30px;
+
+    margin-top:25px;
+}
+
+.video-desc{
+
+    color:#cccccc;
+
+    line-height:2;
+
+    margin-top:14px;
+}
+
+/* 🎞 VIDEO SELECTOR */
+
+.video-selector{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr 1fr 1fr;
+
+    gap:22px;
+
+    margin-top:35px;
+}
+
+.video-card{
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border:
+    1px solid rgba(255,255,255,0.05);
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    cursor:pointer;
+
+    transition:0.25s;
+}
+
+.video-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 0 24px rgba(0,229,255,0.10);
+}
+
+.video-card video{
+
+    width:100%;
+
+    height:170px;
+
+    object-fit:cover;
+
+    display:block;
+
+    background:black;
+}
+
+.video-card h3{
+
+    color:#00e5ff;
+
+    padding:18px;
+
+    margin:0;
+}
+
+/* 💡 TIPS */
+
+.tips-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr 1fr;
+
+    gap:24px;
+
+    margin-top:24px;
+}
+
+.tip-box{
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border:
+    1px solid rgba(255,255,255,0.05);
+
+    border-radius:24px;
+
+    padding:24px;
+
+    transition:0.25s;
+}
+
+.tip-box:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 0 25px rgba(0,229,255,0.10);
+}
+
+.tip-box h3{
+
+    color:#00e5ff;
+}
+
+/* 🌍 COMMUNITY */
+
+.community-box{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr 1fr;
+
+    gap:22px;
+
+    margin-top:25px;
+}
+
+.community-card{
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border:
+    1px solid rgba(255,255,255,0.05);
+
+    border-radius:24px;
+
+    padding:24px;
+}
+
+.community-card h3{
+
+    color:#00e5ff;
+}
+
+/* 💬 FORUM */
+
+.forum-section{
+
+    margin-top:70px;
+}
+
+.forum-section h2{
+
+    font-size:42px;
+
+    color:#00e5ff;
+
+    margin-bottom:30px;
+
+    text-shadow:
+    0 0 20px rgba(0,229,255,0.35);
+}
+
+.forum-create{
+
+    background:
+    rgba(255,255,255,0.05);
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:28px;
+
+    padding:28px;
+
+    backdrop-filter:blur(12px);
+
+    margin-bottom:35px;
+}
+
+.forum-create input,
+.forum-create textarea{
+
+    width:100%;
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    color:white;
+
+    margin-bottom:18px;
+
+    font-size:16px;
+
+    box-sizing:border-box;
+}
+
+.forum-create textarea{
+
+    height:130px;
+
+    resize:none;
+}
+
+.forum-create button{
+
+    padding:14px 26px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#00e5ff;
+
+    color:black;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.forum-post{
+
+    margin-top:26px;
+
+    background:
+    rgba(255,255,255,0.05);
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:28px;
+
+    padding:28px;
+}
+
+.forum-title{
+
+    margin-top:18px;
+
+    font-size:28px;
+
+    color:white;
+}
+
+.forum-text{
+
+    margin-top:16px;
+
+    color:#cccccc;
+
+    line-height:2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+<div class="glow"></div>
+
+<!-- 🧠 BRAND -->
+
+<div class="brand">
+
+    <h1>Den1mteN</h1>
+
+    <p>
+        space • music • thoughts • notes • eFootball
+    </p>
+
+</div>
+
+<!-- 🧭 MENU -->
+
+<div class="top-menu">
+
+    <a href="/">Home</a>
+    <a href="/music.html">Music</a>
+    <a href="/blog.html">Blog</a>
+    <a href="/healthy.html">Healthy</a>
+    <a href="/efootball.html">eFootball</a>
+    <a href="/notes.html">Notes</a>
+
+</div>
+
+<div class="container">
+
+    <!-- 🎬 HERO -->
+
+    <div class="hero">
+
+        <div class="hero-video">
+
+            <video
+                autoplay
+                muted
+                loop
+                controls>
+
+                <source
+                    src="/videos/video_efootball.mp4"
+                    type="video/mp4">
+
+            </video>
+
+        </div>
+
+        <div class="hero-info">
+
+            <h2>
+                eFootball Community
+            </h2>
+
+            <p>
+
+                Тут ти знайдеш
+                корисні поради
+                щодо гри eFootball.
+
+                <br><br>
+
+                А також можеш
+                ділитися своїми
+                здобутками,
+                тактиками,
+                відео
+                та думками
+                щодо вдосконалення
+                майстерності.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ⚽ PLAYER -->
+
+    <div class="card">
+
+        <div class="player-box">
+
+            <div class="player-image">
+
+                <img src="/images/player.jpg">
+
+            </div>
+
+            <div class="player-info">
+
+                <h2>
+                    🏆 Гравець із найвищим рейтингом
+                </h2>
+
+                <p>
+
+                    Тут пізніше буде:
+                    рейтинг,
+                    скрін аккаунту,
+                    статистика,
+                    улюблені склади,
+                    meta build
+                    та best formations.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 🎬 VIDEO HUB -->
+
+    <div class="card">
+
+        <div class="video-title">
+
+            🎬 Best Goals & Highlights
+
+        </div>
+
+        <div class="video-desc">
+
+            Тут буде
+            головне відео тижня,
+            найкращі голи,
+            ranked gameplay,
+            tutorials
+            та атмосфера eFootball community.
+
+        </div>
+
+        <!-- MAIN PLAYER -->
+
+        <div class="main-video-player">
+
+            <video
+                id="mainVideo"
+                controls
+                muted>
+
+                <source
+                    src="/videos/video_efootball1.mp4"
+                    type="video/mp4">
+
+            </video>
+
+        </div>
+
+        <!-- SELECTOR -->
+
+        <div class="video-selector">
+
+            <div
+                class="video-card"
+                onclick="changeVideo('/videos/video_efootball1.mp4')">
+
+                <video muted>
+
+                    <source
+                        src="/videos/video_efootball1.mp4"
+                        type="video/mp4">
+
+                </video>
+
+                <h3>
+                    ⚽ Ностальгія
+                </h3>
+
+            </div>
+
+            <div
+                class="video-card"
+                onclick="changeVideo('/videos/video_efootball2.mp4')">
+
+                <video muted>
+
+                    <source
+                        src="/videos/video_efootball2.mp4"
+                        type="video/mp4">
+
+                </video>
+
+                <h3>
+                    🔥 Top Goals
+                </h3>
+
+            </div>
+
+            <div
+                class="video-card"
+                onclick="changeVideo('/videos/video_efootball3.mp4')">
+
+                <video muted>
+
+                    <source
+                        src="/videos/video_efootball3.mp4"
+                        type="video/mp4">
+
+                </video>
+
+                <h3>
+                    🎮 Ranked Match
+                </h3>
+
+            </div>
+
+            <div
+                class="video-card"
+                onclick="changeVideo('/videos/video_efootball4.mp4')">
+
+                <video muted>
+
+                    <source
+                        src="/videos/video_efootball4.mp4"
+                        type="video/mp4">
+
+                </video>
+
+                <h3>
+                    🧠 Tutorials
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 💡 PRO TIPS -->
+
+    <div class="card">
+
+        <div class="video-title">
+
+            💡 Pro Tips
+
+        </div>
+
+        <div class="tips-grid">
+
+            <div class="tip-box">
+
+                <h3>
+                    ⚡ Quick Counter
+                </h3>
+
+                <p>
+                    Швидкий вихід
+                    через фланги
+                    після перехоплення.
+                </p>
+
+            </div>
+
+            <div class="tip-box">
+
+                <h3>
+                    🧠 Midfield Control
+                </h3>
+
+                <p>
+                    Контролюй темп
+                    через AMF та CMF.
+                </p>
+
+            </div>
+
+            <div class="tip-box">
+
+                <h3>
+                    🛡 Defensive Line
+                </h3>
+
+                <p>
+                    Не підіймай
+                    захист занадто високо
+                    проти speed attackers.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 🌍 COMMUNITY -->
+
+    <div class="card">
+
+        <div class="video-title">
+
+            🌍 Community
+
+        </div>
+
+        <div class="community-box">
+
+            <div class="community-card">
+
+                <h3>
+                    🔥 Trending Players
+                </h3>
+
+                <p>
+                    Найпопулярніші гравці
+                    цього тижня.
+                </p>
+
+            </div>
+
+            <div class="community-card">
+
+                <h3>
+                    ⚽ Best Goals
+                </h3>
+
+                <p>
+                    Найкращі голи
+                    від комʼюніті.
+                </p>
+
+            </div>
+
+            <div class="community-card">
+
+                <h3>
+                    🏆 Top Squads
+                </h3>
+
+                <p>
+                    Найсильніші склади
+                    сезону.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 💬 FORUM -->
+
+    <div class="forum-section">
+
+        <h2>
+            ⚽ eFootball — вирішимо ЯК — РАЗОМ
+        </h2>
+
+        <div class="forum-create">
+
+            <input
+                type="text"
+                placeholder="Назва нового форуму...">
+
+            <textarea
+                placeholder="Напиши свою думку, пораду або питання..."></textarea>
+
+            <button>
+                ➕ Створити форум
+            </button>
+
+        </div>
+
+        <div class="forum-post">
+
+            <div class="forum-title">
+
+                🎮 Як краще будувати атаку через фланги?
+
+            </div>
+
+            <div class="forum-text">
+
+                Хто які схеми використовує?
+                Цікавить швидкий вихід
+                із захисту в атаку
+                та ефективні зв'язки гравців.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function changeVideo(videoPath){
+
+    const player =
+    document.getElementById('mainVideo');
+
+    player.src = videoPath;
+
+    player.play();
+}
+
+/* ✨ glow */
+
+setInterval(()=>{
+
+    document.querySelector('.glow')
+    .style.opacity =
+    Math.random()*0.5+0.5;
+
+},2000);
+
+</script>
+
+</body>
+</html>

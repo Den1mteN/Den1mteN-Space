@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Blog | Den1mteN Space</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    color:white;
+    overflow-x:hidden;
+    background:black;
+}
+
+/* 🌌 BACKGROUND */
+.bg{
+    position:fixed;
+    inset:0;
+
+    background-image:url('/images/den.jpg');
+    background-size:cover;
+    background-position:center;
+
+    transform:scale(1.05);
+
+    z-index:-4;
+
+    animation:bgMove 18s ease-in-out infinite alternate;
+}
+
+@keyframes bgMove{
+
+    from{
+        transform:scale(1.05) translateX(0px);
+    }
+
+    to{
+        transform:scale(1.09) translateX(-10px);
+    }
+}
+
+/* 🌑 OVERLAY */
+.bg-overlay{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.80);
+
+    z-index:-3;
+}
+
+/* ✨ GLOW */
+.glow{
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(
+        circle at center,
+        rgba(255,120,255,0.10),
+        transparent 60%
+    );
+
+    z-index:-2;
+
+    animation:pulse 5s infinite;
+}
+
+@keyframes pulse{
+
+    0%{opacity:0.5;}
+    50%{opacity:1;}
+    100%{opacity:0.5;}
+}
+
+/* 🧠 BRAND */
+.brand{
+    position:absolute;
+    top:18px;
+    left:25px;
+}
+
+.brand h1{
+
+    margin:0;
+
+    font-size:24px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ffffff,
+        #ff66ff,
+        #ffffff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.brand p{
+
+    margin:0;
+
+    color:#ff66ff;
+
+    font-size:12px;
+}
+
+/* 🧭 MENU */
+.top-menu{
+
+    position:absolute;
+
+    top:20px;
+    right:25px;
+}
+
+.top-menu a{
+
+    color:white;
+
+    text-decoration:none;
+
+    margin-left:18px;
+
+    font-weight:bold;
+
+    transition:0.25s;
+}
+
+.top-menu a:hover{
+
+    color:#ff66ff;
+
+    text-shadow:0 0 10px #ff66ff;
+}
+
+/* 📦 CONTENT */
+.container{
+
+    max-width:1250px;
+
+    margin:auto;
+
+    padding-top:130px;
+    padding-bottom:60px;
+}
+
+/* 🎬 TRAILER */
+.trailer-section{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:24px;
+
+    margin-bottom:42px;
+}
+
+/* 🎥 VIDEO */
+.video-box{
+
+    width:420px;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    border:
+    1px solid rgba(255,120,255,0.22);
+
+    background:rgba(255,255,255,0.04);
+
+    box-shadow:
+    0 0 24px rgba(255,120,255,0.14);
+}
+
+.video-box video{
+
+    width:100%;
+
+    display:block;
+}
+
+/* 📝 INFO */
+.trailer-info{
+
+    flex:1;
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:22px;
+
+    padding:24px;
+
+    border:
+    1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(10px);
+}
+
+.trailer-info h2{
+
+    margin-top:0;
+
+    color:#ff66ff;
+
+    font-size:34px;
+}
+
+.trailer-info p{
+
+    color:#dddddd;
+
+    line-height:1.8;
+
+    max-width:520px;
+}
+
+/* 🧩 GRID */
+.grid{
+
+    display:grid;
+
+    grid-template-columns:1.1fr 0.9fr;
+
+    gap:30px;
+}
+
+/* 📦 BLOCK */
+.block{
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:24px;
+
+    padding:28px;
+
+    border:
+    1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(10px);
+
+    transition:0.3s;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.block:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 0 28px rgba(255,120,255,0.16);
+}
+
+/* ✨ SHINE */
+.block::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-120%;
+    left:-40%;
+
+    width:60%;
+    height:300%;
+
+    background:
+    linear-gradient(
+        transparent,
+        rgba(255,255,255,0.08),
+        transparent
+    );
+
+    transform:rotate(25deg);
+
+    transition:0.8s;
+}
+
+.block:hover::before{
+    left:120%;
+}
+
+/* 📝 POST */
+.post{
+
+    background:rgba(255,255,255,0.04);
+
+    border-radius:18px;
+
+    padding:20px;
+
+    margin-top:18px;
+}
+
+.post-title{
+
+    font-size:24px;
+
+    color:#ff66ff;
+
+    margin-bottom:12px;
+}
+
+.post-meta{
+
+    margin-top:16px;
+
+    color:#aaaaaa;
+}
+
+/* 💬 CHAT */
+.chat-box{
+
+    margin-top:20px;
+}
+
+.message{
+
+    padding:14px;
+
+    border-radius:14px;
+
+    margin-top:12px;
+
+    background:rgba(255,255,255,0.04);
+
+    animation:fadeIn 0.5s;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0px);
+    }
+}
+
+/* 🔥 TAG */
+.tag{
+
+    display:inline-block;
+
+    margin-top:10px;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    background:rgba(255,120,255,0.14);
+
+    color:#ff66ff;
+
+    font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="bg-overlay"></div>
+<div class="glow"></div>
+
+<!-- 🧠 BRAND -->
+<div class="brand">
+
+    <h1>Den1mteN</h1>
+
+    <p>
+        space • music • thoughts • notes • eFootball
+    </p>
+
+</div>
+
+<!-- 🧭 MENU -->
+<div class="top-menu">
+
+    <a href="/">Home</a>
+    <a href="/music.html">Music</a>
+    <a href="/blog.html">Blog</a>
+    <a href="/healthy.html">Healthy</a>
+    <a href="/efootball.html">eFootball</a>
+    <a href="/notes.html">Notes</a>
+
+</div>
+
+<!-- 📦 CONTENT -->
+<div class="container">
+
+    <!-- 🎬 TRAILER -->
+    <div class="trailer-section">
+
+        <div class="video-box">
+
+            <video
+    autoplay
+    muted
+    loop
+    playsinline
+    controls
+>
+                <source
+                   src="/videos/video_blog.mp4.mp4"
+                    type="video/mp4"
+                >
+
+            </video>
+
+        </div>
+
+        <div class="trailer-info">
+
+            <h2>
+                Blog Atmosphere
+            </h2>
+
+            <p>
+                Thoughts, emotions,
+                digital energy and community.
+                
+                Потрібен DevOps чи системний адмін —
+                знайомтесь, це я!
+
+                Потрібна айті допомога?
+                Пиши до блогу — вирішимо!
+                БЛОГ - для обговорення будь-яких ситуацій. Поділись з нами! 
+
+            </p>
+
+            <div class="tag">
+                ● community online
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 🧩 GRID -->
+    <div class="grid">
+
+        <!-- 📝 POSTS -->
+        <div class="block">
+
+            <h2>
+                🔥 Featured Post
+            </h2>
+
+            <div class="post">
+
+                <div class="post-title">
+                    Night Thoughts
+                </div>
+
+                <p>
+                    Sometimes silence creates
+                    stronger emotions than words.
+                </p>
+
+                <div class="post-meta">
+                    ❤️ 421 likes • 💬 38 comments
+                </div>
+
+            </div>
+
+            <div class="post">
+
+                <div class="post-title">
+                    Creative Energy
+                </div>
+
+                <p>
+                    The strongest projects
+                    are built late at night.
+                </p>
+
+                <div class="post-meta">
+                    ❤️ 214 likes • 💬 17 comments
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 💬 CHAT -->
+        <div class="block">
+
+            <h2>
+                💬 Community Chat
+            </h2>
+
+            <div class="chat-box">
+
+                <div class="message">
+                    Den1mteN: welcome to the space 🌌
+                </div>
+
+                <div class="message">
+                    user404: this atmosphere is insane
+                </div>
+
+                <div class="message">
+                    lilahil: waiting for new tracks 🎧
+                </div>
+
+                <div class="message">
+                    ghost.exe: cinematic vibes
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ✨ glow randomizer */
+
+setInterval(()=>{
+
+    document.querySelector('.glow')
+    .style.opacity =
+    Math.random()*0.6+0.4;
+
+},2000);
+
+</script>
+
+</body>
+</html>

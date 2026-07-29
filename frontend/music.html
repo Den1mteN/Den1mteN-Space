@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Music | Den1mteN Space</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:black;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* 🌌 BACKGROUND */
+
+.bg{
+    position:fixed;
+    inset:0;
+
+    background-image:url('/images/den.jpg');
+    background-size:cover;
+    background-position:center;
+
+    transform:scale(1.05);
+
+    z-index:-5;
+
+    animation:bgMove 18s ease-in-out infinite alternate;
+}
+
+@keyframes bgMove{
+
+    from{
+        transform:scale(1.05) translateX(0px);
+    }
+
+    to{
+        transform:scale(1.09) translateX(-12px);
+    }
+}
+
+/* 🌑 OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+
+    background:
+    linear-gradient(
+        rgba(0,0,0,0.68),
+        rgba(0,0,0,0.92)
+    );
+
+    z-index:-4;
+}
+
+/* ✨ GLOW */
+
+.glow{
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(
+        circle at center,
+        rgba(0,229,255,0.10),
+        transparent 65%
+    );
+
+    z-index:-3;
+
+    animation:pulse 5s infinite;
+}
+
+@keyframes pulse{
+
+    0%{opacity:0.45;}
+    50%{opacity:1;}
+    100%{opacity:0.45;}
+}
+
+/* 🧠 BRAND */
+
+.brand{
+    position:absolute;
+    top:18px;
+    left:25px;
+}
+
+.brand h1{
+
+    margin:0;
+
+    font-size:25px;
+
+    letter-spacing:2px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ffffff,
+        #00e5ff,
+        #ffffff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.brand p{
+
+    margin:0;
+
+    color:#00e5ff;
+
+    font-size:12px;
+
+    letter-spacing:1px;
+}
+
+/* 🧭 MENU */
+
+.top-menu{
+
+    position:absolute;
+
+    top:20px;
+    right:25px;
+}
+
+.top-menu a{
+
+    color:white;
+
+    text-decoration:none;
+
+    margin-left:18px;
+
+    font-weight:bold;
+
+    transition:0.25s;
+}
+
+.top-menu a:hover{
+
+    color:#00e5ff;
+
+    text-shadow:0 0 12px #00e5ff;
+}
+
+/* 📦 CONTAINER */
+
+.container{
+
+    max-width:1380px;
+
+    margin:auto;
+
+    padding-top:130px;
+    padding-bottom:90px;
+}
+
+/* 🎬 HERO */
+
+.hero{
+
+    display:flex;
+
+    gap:30px;
+
+    align-items:center;
+
+    margin-bottom:45px;
+}
+
+.hero-video{
+
+    width:520px;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    border:
+    1px solid rgba(0,229,255,0.20);
+
+    box-shadow:
+    0 0 40px rgba(0,229,255,0.14);
+}
+
+.hero-video iframe{
+
+    width:100%;
+    height:300px;
+
+    display:block;
+}
+
+.hero-info{
+
+    flex:1;
+
+    background:
+    rgba(255,255,255,0.05);
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:30px;
+
+    padding:38px;
+
+    backdrop-filter:blur(12px);
+}
+
+.hero-info h2{
+
+    margin-top:0;
+
+    font-size:48px;
+
+    color:#00e5ff;
+}
+
+.hero-info p{
+
+    color:#dddddd;
+
+    line-height:2;
+
+    font-size:18px;
+}
+
+/* 🔥 ON FIRE */
+
+.fire-title{
+
+    font-size:42px;
+
+    color:#00e5ff;
+
+    margin-top:70px;
+    margin-bottom:35px;
+
+    text-shadow:
+    0 0 20px rgba(0,229,255,0.35);
+}
+
+.fire-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+}
+
+/* 📦 CARD */
+
+.card{
+
+    background:
+    rgba(255,255,255,0.05);
+
+    border:
+    1px solid rgba(255,255,255,0.06);
+
+    border-radius:28px;
+
+    padding:28px;
+
+    backdrop-filter:blur(12px);
+
+    transition:0.3s;
+}
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 0 30px rgba(0,229,255,0.12);
+}
+
+/* 🎵 AUDIO */
+
+.track-title{
+
+    color:#00e5ff;
+
+    font-size:28px;
+
+    margin-bottom:20px;
+}
+
+audio{
+
+    width:100%;
+}
+
+.track-meta{
+
+    margin-top:18px;
+
+    color:#aaaaaa;
+}
+
+/* 🎥 VIDEO */
+
+.video-frame{
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.video-frame iframe,
+.video-frame video{
+
+    width:100%;
+
+    height:300px;
+
+    display:block;
+
+    background:black;
+}
+
+.video-name{
+
+    margin-top:18px;
+
+    color:#00e5ff;
+
+    font-size:26px;
+}
+
+.video-desc{
+
+    margin-top:12px;
+
+    color:#cccccc;
+
+    line-height:1.9;
+}
+
+/* 🔘 TABS */
+
+.tabs{
+
+    display:flex;
+
+    gap:18px;
+
+    margin-top:65px;
+    margin-bottom:40px;
+
+    flex-wrap:wrap;
+}
+
+.tabs button{
+
+    padding:14px 24px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:
+    rgba(255,255,255,0.05);
+
+    border:
+    1px solid rgba(0,229,255,0.14);
+
+    color:#00e5ff;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.25s;
+}
+
+.tabs button:hover{
+
+    background:#00e5ff;
+
+    color:black;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 0 18px rgba(0,229,255,0.35);
+}
+
+/* 📂 SECTION */
+
+.section{
+
+    display:none;
+
+    animation:fade 0.4s;
+}
+
+.section.active{
+
+    display:block;
+}
+
+@keyframes fade{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0px);
+    }
+}
+
+/* 📝 LYRICS */
+
+.lyrics-title{
+
+    color:#00e5ff;
+
+    font-size:30px;
+
+    margin-bottom:22px;
+}
+
+.lyrics-box{
+
+    background:
+    rgba(255,255,255,0.04);
+
+    border:
+    1px solid rgba(255,255,255,0.05);
+
+    border-radius:24px;
+
+    padding:28px;
+
+    color:#dddddd;
+
+    line-height:2;
+
+    white-space:pre-line;
+}
+
+/* 👤 ARTIST */
+
+.artist{
+
+    display:flex;
+
+    gap:28px;
+
+    align-items:center;
+}
+
+.artist-avatar{
+
+    width:180px;
+    height:180px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    border:
+    2px solid rgba(0,229,255,0.20);
+}
+
+.artist-avatar img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+}
+
+.artist-info h2{
+
+    color:#00e5ff;
+
+    font-size:40px;
+
+    margin-top:0;
+}
+
+.artist-info p{
+
+    color:#dddddd;
+
+    line-height:2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+<div class="glow"></div>
+
+<!-- 🧠 BRAND -->
+
+<div class="brand">
+
+    <h1>Den1mteN</h1>
+
+    <p>
+        space • music • thoughts • notes • eFootball
+    </p>
+
+</div>
+
+<!-- 🧭 MENU -->
+
+<div class="top-menu">
+
+    <a href="/">Home</a>
+    <a href="/music.html">Music</a>
+    <a href="/blog.html">Blog</a>
+    <a href="/healthy.html">Healthy</a>
+    <a href="/efootball.html">eFootball</a>
+    <a href="/notes.html">Notes</a>
+
+</div>
+
+<!-- 📦 CONTENT -->
+
+<div class="container">
+
+    <!-- 🎬 INTRO -->
+
+    <div class="hero">
+
+        <div class="hero-video">
+
+            <iframe
+                src="https://www.youtube.com/embed/8Bd9EvuE-V4"
+                frameborder="0"
+                allowfullscreen>
+
+            </iframe>
+
+        </div>
+
+        <div class="hero-info">
+
+            <h2>
+                Music Atmosphere
+            </h2>
+
+            <p>
+
+                Слухай краще
+                від виконавця
+                Lil Ahil a.k.a. Den1mteN.
+
+                <br><br>
+
+                Завантажуй,
+                слухай онлайн,
+                дивись кліпи,
+                читай тексти
+                та занурюйся
+                в атмосферу творчості.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- 🔥 ON FIRE -->
+
+    <div class="fire-title">
+
+        🔥 ON FIRE
+
+    </div>
+
+    <div class="fire-grid">
+
+        <!-- 🎵 TOP AUDIO -->
+
+        <div class="card">
+
+            <div class="track-title">
+
+                🎵 Найпопулярніше аудіо
+
+            </div>
+
+            <h2>
+                Lil Ahil — Бідна моя Україно
+            </h2>
+
+            <audio controls>
+
+                <source
+                    src="/music/bidna-moya-ukrayino.mp3"
+                    type="audio/mpeg">
+
+            </audio>
+
+            <div class="track-meta">
+
+                ❤️ 1.8k likes
+                •
+                ▶ 14k listens
+                •
+                🔥 Trending
+
+            </div>
+
+        </div>
+
+        <!-- 🎬 TOP VIDEO -->
+
+        <div class="card">
+
+            <div class="video-frame">
+
+                <video
+                    controls
+                    muted>
+
+                    <source
+                        src="/videos/vichluvist.mp4"
+                        type="video/mp4">
+
+                </video>
+
+            </div>
+
+            <div class="video-name">
+
+                🎬 Найпопулярніше відео
+
+            </div>
+
+            <div class="video-desc">
+
+                Den1mteN — Ввічливість
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 🔘 MENU -->
+
+    <div class="tabs">
+
+        <button onclick="showSection('tracks')">
+            🎵 Tracks
+        </button>
+
+        <button onclick="showSection('videos')">
+            🎬 Videos
+        </button>
+
+        <button onclick="showSection('lyrics')">
+            📝 Lyrics
+        </button>
+
+        <button onclick="showSection('artist')">
+            👤 Artist
+        </button>
+
+    </div>
+
+    <!-- 🎵 TRACKS -->
+
+    <div
+        class="section active"
+        id="tracks">
+
+        <div class="card">
+
+            <div class="track-title">
+
+                Lil Ahil — Бідна моя Україно
+
+            </div>
+
+            <audio controls>
+
+                <source
+                    src="/music/bidna-moya-ukrayino.mp3"
+                    type="audio/mpeg">
+
+            </audio>
+
+        </div>
+
+        <div class="card">
+
+            <div class="track-title">
+
+                Lil Ahil — Новий реп
+
+            </div>
+
+            <audio controls>
+
+                <source
+                    src="/music/novui_rap.mp3"
+                    type="audio/mpeg">
+
+            </audio>
+
+        </div>
+
+    </div>
+
+    <!-- 🎬 VIDEOS -->
+
+    <div
+        class="section"
+        id="videos">
+
+        <div class="card">
+
+            <div class="video-frame">
+
+                <iframe
+                    src="https://www.youtube.com/embed/ntV5G6HENhk"
+                    frameborder="0"
+                    allowfullscreen>
+
+                </iframe>
+
+            </div>
+
+            <div class="video-name">
+
+                Official Release
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="video-frame">
+
+                <video
+                    controls
+                    muted>
+
+                    <source
+                        src="/videos/vichluvist.mp4"
+                        type="video/mp4">
+
+                </video>
+
+            </div>
+
+            <div class="video-name">
+
+                Den1mteN — Ввічливість
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 📝 LYRICS -->
+
+    <div
+        class="section"
+        id="lyrics">
+
+        <div class="card">
+
+            <div class="lyrics-title">
+
+                📖 Ввічливість
+
+            </div>
+
+            <div class="lyrics-box">
+
+ТУТ ВСТАВ ТЕКСТ ПІСНІ "ВВІЧЛИВІСТЬ"
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 👤 ARTIST -->
+
+    <div
+        class="section"
+        id="artist">
+
+        <div class="card">
+
+            <div class="artist">
+
+                <div class="artist-avatar">
+
+                    <img src="/images/den1.jpg">
+
+                </div>
+
+                <div class="artist-info">
+
+                    <h2>
+                        Lil Ahil a.k.a. Den1mteN
+                    </h2>
+
+                    <p>
+
+                        Незалежний артист,
+                        автор власних релізів,
+                        кліпів,
+                        музичної атмосфери
+                        та творчого простору
+                        Den1mteN Space.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function showSection(sectionId){
+
+    let sections =
+    document.querySelectorAll('.section');
+
+    sections.forEach(section=>{
+
+        section.classList.remove('active');
+
+    });
+
+    document
+    .getElementById(sectionId)
+    .classList.add('active');
+}
+
+/* ✨ glow */
+
+setInterval(()=>{
+
+    document.querySelector('.glow')
+    .style.opacity =
+    Math.random()*0.5+0.5;
+
+},2000);
+
+</script>
+
+</body>
+</html>
