@@ -243,15 +243,11 @@
 @keyframes panelGlow{
 
     from{
-
         top:-120%;
-
     }
 
     to{
-
         top:160%;
-
     }
 
 }

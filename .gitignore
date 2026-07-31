@@ -16,3 +16,4 @@ frontend/music/*.wav
 # OS
 .DS_Store
 Thumbs.db
+frontend_old/

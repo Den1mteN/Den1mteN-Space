@@ -8,6 +8,8 @@ function renderProfileMenu(username) {
 
     if (!container) return;
 
+    console.log("Контейнер знайдено:", container);
+
     container.innerHTML = `
         <div class="profile-panel">
 

@@ -1,32 +1,43 @@
-const loginOpenBtn = document.getElementById("loginOpen");
-const modal = document.getElementById("loginModal");
-const closeBtn = document.getElementById("closeLogin");
+// ============================================
+// DEN1MTEN SPACE AUTH SYSTEM
+// ============================================
 
-const loginActionBtn = document.getElementById("loginBtn");
+// ---------- ELEMENTS ----------
 
+const loginOpen = document.getElementById("loginOpen");
+const loginModal = document.getElementById("loginModal");
+const closeLogin = document.getElementById("closeLogin");
+const loginBtn = document.getElementById("loginBtn");
 
-// ---------- OPEN ----------
+// ---------- OPEN LOGIN ----------
 
-loginOpenBtn.addEventListener("click", () => {
+if (loginOpen) {
 
-    modal.style.display = "flex";
+    loginOpen.onclick = () => {
 
-});
+        loginModal.style.display = "flex";
 
+    };
 
-// ---------- CLOSE ----------
+}
 
-closeBtn.addEventListener("click", () => {
+// ---------- CLOSE LOGIN ----------
 
-    modal.style.display = "none";
+if (closeLogin) {
 
-});
+    closeLogin.onclick = () => {
+
+        loginModal.style.display = "none";
+
+    };
+
+}
 
 window.addEventListener("click", (e) => {
 
-    if (e.target === modal) {
+    if (e.target === loginModal) {
 
-        modal.style.display = "none";
+        loginModal.style.display = "none";
 
     }
 
@@ -36,18 +47,19 @@ window.addEventListener("keydown", (e) => {
 
     if (e.key === "Escape") {
 
-        modal.style.display = "none";
+        loginModal.style.display = "none";
 
     }
 
 });
 
+// ============================================
+// LOGIN
+// ============================================
 
-// ---------- LOGIN ----------
+async function login() {
 
-loginActionBtn.addEventListener("click", async () => {
-
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
 
     const password = document.getElementById("password").value;
 
@@ -82,41 +94,97 @@ loginActionBtn.addEventListener("click", async () => {
 
         }
 
-        // Зберігаємо JWT
-
         localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.user.username);
+        localStorage.setItem("email", data.user.email);
 
-        localStorage.setItem(
+        loginModal.style.display = "none";
 
-            "username",
-
-            data.user.username
-
-        );
-
-        // Міняємо кнопку
-
-loginOpenBtn.style.display = "none";
-
-renderProfileMenu(data.user.username);
-        // Закриваємо модалку
-
-        modal.style.display = "none";
-
-        // Очистити поля
-
-        document.getElementById("email").value = "";
-
-        document.getElementById("password").value = "";
+        updateUserPanel();
 
     }
 
-    catch(err){
+    catch (err) {
 
         console.error(err);
 
-        alert("Server error");
+        alert("Server unavailable");
 
     }
+
+}
+
+if (loginBtn) {
+
+    loginBtn.onclick = login;
+
+}
+
+// ============================================
+// USER PANEL
+// ============================================
+
+function updateUserPanel() {
+
+    const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
+
+    const container = document.getElementById("profileMenuContainer");
+
+    if (!token) {
+
+        if (loginOpen) {
+            loginOpen.style.display = "";
+            loginOpen.innerHTML = "👤 Login";
+        }
+
+        if (container) {
+            container.innerHTML = "";
+        }
+
+        return;
+
+    }
+
+    if (loginOpen) {
+        loginOpen.style.display = "none";
+    }
+
+    if (typeof renderProfileMenu === "function") {
+        renderProfileMenu(username);
+    } else {
+        console.warn("renderProfileMenu() не знайдено");
+    }
+
+}
+
+// ============================================
+// LOGOUT
+// ============================================
+
+function logout() {
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+
+    const container = document.getElementById("profileMenuContainer");
+
+    if (container) {
+        container.innerHTML = "";
+    }
+
+    if (loginOpen) {
+        loginOpen.style.display = "";
+        loginOpen.innerHTML = "👤 Login";
+    }
+
+}
+
+// ---------- START ----------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    updateUserPanel();
 
 });

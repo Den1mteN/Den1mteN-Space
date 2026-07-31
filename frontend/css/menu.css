@@ -1,0 +1,38 @@
+/* 🧭 MENU */
+.menu {
+    margin-top: 30px;
+
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+
+    flex-wrap: wrap;
+}
+
+.menu a {
+    text-decoration: none;
+
+    color: white;
+
+    padding: 12px 22px;
+
+    border-radius: 40px;
+
+    background: rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    transition: 0.25s;
+
+    font-weight: bold;
+}
+
+.menu a:hover {
+    transform: scale(1.08);
+
+    background: rgba(0,229,255,0.15);
+
+    box-shadow: 0 0 20px rgba(0,229,255,0.25);
+}

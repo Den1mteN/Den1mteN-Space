@@ -1,0 +1,158 @@
+/* 🔥 FEATURED POST */
+.featured-wrapper {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 55px;
+}
+
+.featured-post {
+
+    width: 70%;
+    max-width: 900px;
+
+    background: rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(10px);
+
+    border-radius: 24px;
+
+    padding: 35px;
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    box-shadow:
+        0 0 30px rgba(0,229,255,0.08);
+}
+
+/* title */
+.featured-title {
+    color: #00e5ff;
+
+    font-size: 14px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 15px;
+}
+
+/* post name */
+.featured-post h2 {
+    margin-top: 0;
+
+    font-size: 34px;
+}
+
+/* text */
+.featured-post p {
+    color: #cccccc;
+
+    line-height: 1.7;
+}
+
+/* views */
+.views {
+    margin-top: 25px;
+
+    color: #00e5ff;
+
+    font-weight: bold;
+}
+
+/* 📸 PHOTO AREA */
+/* 📸 PHOTO AREA */
+.photos {
+
+    margin-top: 70px;
+
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+
+    padding-left: 40px;
+    padding-right: 40px;
+
+    box-sizing: border-box;
+
+    padding-bottom: 70px;
+}
+
+/* 🫧 PHOTO CARD */
+.photo-card {
+
+    width: 32%;
+    height: 520px;
+
+    overflow: hidden;
+
+    border-radius: 28px;
+
+    position: relative;
+
+    background: rgba(255,255,255,0.05);
+
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    transition: 0.35s;
+
+    box-shadow:
+        0 0 25px rgba(0,0,0,0.35);
+}
+
+/* ✨ HOVER */
+.photo-card:hover {
+
+    transform: scale(1.02);
+
+    box-shadow:
+        0 0 35px rgba(0,229,255,0.20);
+}
+
+/* 🖼 IMAGE */
+.photo-card img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+/* 🎯 LEFT IMAGE FOCUS */
+.left-photo img{
+    object-position:center top;
+}
+
+/* 🎯 RIGHT IMAGE FOCUS */
+.right-photo img{
+    object-position:center center;
+
+    filter:
+        contrast(1.1)
+        brightness(0.92);
+}
+
+/* ✨ PHOTO HOVER */
+.photo-card:hover{
+
+    transform:scale(1.03);
+
+    box-shadow:
+        0 0 25px rgba(0,229,255,.18);
+
+}
+
+/* 🖼 IMAGE */
+.photo-card img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
