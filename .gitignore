@@ -7,13 +7,13 @@ node_modules/
 # Logs
 *.log
 
-# Videos
-frontend/videos/*.mp4
-
-# Large audio
-frontend/music/*.wav
+# Static media
+frontend/assets/videos/*
+frontend/assets/music/*
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Temporary folders
 frontend_old/

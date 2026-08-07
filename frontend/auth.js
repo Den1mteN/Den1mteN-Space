@@ -129,32 +129,50 @@ function updateUserPanel() {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
 
-    const container = document.getElementById("profileMenuContainer");
+    const panel = document.getElementById("userPanel");
+
+    if (!panel) return;
+
+    // -----------------------
+    // NOT LOGGED
+    // -----------------------
 
     if (!token) {
 
-        if (loginOpen) {
-            loginOpen.style.display = "";
-            loginOpen.innerHTML = "👤 Login";
-        }
+        panel.innerHTML = `
+            <button id="loginOpen">
+                👤 Login
+            </button>
+        `;
 
-        if (container) {
-            container.innerHTML = "";
-        }
+        document
+            .getElementById("loginOpen")
+            .onclick = () => {
+
+                loginModal.style.display = "flex";
+
+            };
 
         return;
 
     }
 
-    if (loginOpen) {
-        loginOpen.style.display = "none";
-    }
+    // -----------------------
+    // LOGGED
+    // -----------------------
 
-    if (typeof renderProfileMenu === "function") {
-        renderProfileMenu(username);
-    } else {
-        console.warn("renderProfileMenu() не знайдено");
-    }
+    panel.innerHTML = `
+        <button id="profileButton">
+            👤 ${username}
+        </button>
+
+        <div id="profileMenuContainer"></div>
+    `;
+
+    console.log("Перед renderProfileMenu");
+    console.log(typeof renderProfileMenu);
+
+    renderProfileMenu(username);
 
 }
 
@@ -174,10 +192,11 @@ function logout() {
         container.innerHTML = "";
     }
 
-    if (loginOpen) {
-        loginOpen.style.display = "";
-        loginOpen.innerHTML = "👤 Login";
-    }
+if (loginOpen) {
+
+    loginOpen.innerHTML = "👤 Login";
+
+}
 
 }
 
