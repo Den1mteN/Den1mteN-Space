@@ -186,17 +186,7 @@ function logout() {
     localStorage.removeItem("username");
     localStorage.removeItem("email");
 
-    const container = document.getElementById("profileMenuContainer");
-
-    if (container) {
-        container.innerHTML = "";
-    }
-
-if (loginOpen) {
-
-    loginOpen.innerHTML = "👤 Login";
-
-}
+    updateUserPanel();
 
 }
 
