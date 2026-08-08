@@ -8,6 +8,10 @@ const loginOpen = document.getElementById("loginOpen");
 const loginModal = document.getElementById("loginModal");
 const closeLogin = document.getElementById("closeLogin");
 const loginBtn = document.getElementById("loginBtn");
+const registerOpen = document.getElementById("registerOpen");
+const registerModal = document.getElementById("registerModal");
+const closeRegister = document.getElementById("closeRegister");
+const registerBtn = document.getElementById("registerBtn");
 
 // ---------- OPEN LOGIN ----------
 
@@ -20,6 +24,19 @@ if (loginOpen) {
     };
 
 }
+
+// ---------- OPEN REGISTER ----------
+
+if (registerOpen) {
+
+    registerOpen.onclick = () => {
+
+        registerModal.style.display = "flex";
+
+    };
+
+}
+
 
 // ---------- CLOSE LOGIN ----------
 
