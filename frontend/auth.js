@@ -137,6 +137,66 @@ if (loginBtn) {
 
 }
 
+async function register() {
+
+    const username = document.getElementById("registerUsername").value.trim();
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value;
+
+    try {
+
+        const response = await fetch("/api/register", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+                username,
+                email,
+                password
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+
+            alert(data.message);
+
+            return;
+
+        }
+
+        alert("Account created successfully!");
+
+        registerModal.style.display = "none";
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        alert("Server unavailable");
+
+    }
+
+}
+
+if (registerBtn) {
+
+    registerBtn.onclick = register;
+
+}
+
 // ============================================
 // USER PANEL
 // ============================================
