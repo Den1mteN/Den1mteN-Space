@@ -175,9 +175,40 @@ async function register() {
 
         }
 
-        alert("Account created successfully!");
+const loginResponse = await fetch("/api/login", {
 
-        registerModal.style.display = "none";
+    method: "POST",
+
+    headers: {
+        "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+        email,
+        password
+    })
+
+});
+
+const loginData = await loginResponse.json();
+
+if (!loginData.success) {
+
+    alert("Account created, but automatic login failed.");
+    registerModal.style.display = "none";
+
+    return;
+
+}
+
+localStorage.setItem("token", loginData.token);
+localStorage.setItem("username", loginData.user.username);
+localStorage.setItem("email", loginData.user.email);
+
+registerModal.style.display = "none";
+
+updateUserPanel();
+
 
     }
 
