@@ -73,6 +73,107 @@ exports.login = async (req, res) => {
             [email]
         );
 
+exports.updateUsername = async (req, res) => {
+
+    try {
+
+        const { username } = req.body;
+
+        if (!username || !username.trim()) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Username is required"
+            });
+
+        }
+
+        const newUsername = username.trim();
+
+        if (newUsername.length < 3 || newUsername.length > 50) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Username must be between 3 and 50 characters"
+            });
+
+        }
+
+        const existingUser = await pool.query(
+            "SELECT id FROM users WHERE username = $1 AND id != $2",
+            [newUsername, req.user.id]
+        );
+
+        if (existingUser.rows.length > 0) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Username already exists"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            UPDATE users
+            SET username = $1
+            WHERE id = $2
+            RETURNING id, username, email, role
+            `,
+            [newUsername, req.user.id]
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+
+        }
+
+        const user = result.rows[0];
+
+        const token = jwt.sign(
+            {
+                id: user.id,
+                username: user.username,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "24h"
+            }
+        );
+
+        return res.json({
+
+            success: true,
+            message: "Username updated",
+            token,
+
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            }
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+
+    }
+
+};
+
+
         if (result.rows.length === 0) {
 
             return res.status(401).json({
