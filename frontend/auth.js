@@ -115,6 +115,8 @@ async function login() {
         localStorage.setItem("username", data.user.username);
         localStorage.setItem("email", data.user.email);
 
+        window.dispatchEvent(new Event("authChanged"));
+
         loginModal.style.display = "none";
 
         updateUserPanel();
@@ -175,40 +177,9 @@ async function register() {
 
         }
 
-const loginResponse = await fetch("/api/login", {
+        alert("Account created successfully!");
 
-    method: "POST",
-
-    headers: {
-        "Content-Type": "application/json"
-    },
-
-    body: JSON.stringify({
-        email,
-        password
-    })
-
-});
-
-const loginData = await loginResponse.json();
-
-if (!loginData.success) {
-
-    alert("Account created, but automatic login failed.");
-    registerModal.style.display = "none";
-
-    return;
-
-}
-
-localStorage.setItem("token", loginData.token);
-localStorage.setItem("username", loginData.user.username);
-localStorage.setItem("email", loginData.user.email);
-
-registerModal.style.display = "none";
-
-updateUserPanel();
-
+        registerModal.style.display = "none";
 
     }
 
