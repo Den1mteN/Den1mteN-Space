@@ -646,6 +646,89 @@ body{
     word-break: break-word;
 }
 
+.post-modal-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 120, 255, 0.25);
+    margin: 24px 0;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.comment-form textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.comment-form button {
+    align-self: flex-end;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-item {
+    padding: 12px 14px;
+    border-left: 3px solid rgba(255, 120, 255, 0.7);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.comment-meta {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 4px;
+}
+
+.comment-text {
+    color: #eee;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.comment-actions {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 8px;
+}
+
+.comment-actions button {
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.comment-actions button:hover {
+    color: #ff78ff;
+}
+
+.comment-edit-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    resize: vertical;
+    margin-top: 6px;
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.comment-edit-actions button {
+    font-size: 13px;
+}
 
 }
 
@@ -1021,6 +1104,14 @@ body{
     <div class="post-modal-content">
 
 <button
+    id="editPostButton"
+    class="post-modal-edit"
+    type="button"
+>
+    ✏️ Редагувати пост
+</button>
+
+<button
     id="deletePostButton"
     class="post-modal-delete"
     type="button"
@@ -1054,9 +1145,35 @@ body{
             class="post-modal-text"
         ></div>
 
+        <hr class="post-modal-divider">
+
+        <div class="comment-form">
+
+            <textarea
+                id="commentInput"
+                placeholder="Написати коментар..."
+                maxlength="500"
+                rows="2"
+            ></textarea>
+
+            <button
+                id="addCommentButton"
+                type="button"
+            >
+                💬 Додати коментар
+            </button>
+
+        </div>
+
+        <div
+            id="commentsList"
+            class="comments-list"
+        ></div>
+
     </div>
 
 </div>
+
 <script>
 
 /* ✨ glow randomizer */
@@ -1071,7 +1188,7 @@ setInterval(()=>{
 
 </script>
 
-<script src="/js/blog.js?v=2"></script>
+<script src="/js/blog.js?v=4"></script>
 
 
 </body>

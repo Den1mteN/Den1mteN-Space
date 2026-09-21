@@ -62,8 +62,111 @@ const uploadPostImage = multer({
 
 });
 
+const tracksUploadDir = "/var/www/myproject/assets/music";
+
+const trackStorage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+
+        cb(null, tracksUploadDir);
+
+    },
+
+    filename: function (req, file, cb) {
+
+        const ext = path.extname(file.originalname).toLowerCase();
+
+        const filename =
+            `track-${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
+
+        cb(null, filename);
+
+    }
+
+});
+
+const videosUploadDir = "/var/www/myproject/assets/videos";
+
+const videoStorage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+
+        cb(null, videosUploadDir);
+
+    },
+
+    filename: function (req, file, cb) {
+
+        const ext = path.extname(file.originalname).toLowerCase();
+
+        const filename =
+            `video-${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
+
+        cb(null, filename);
+
+    }
+
+});
+
+const uploadVideo = multer({
+
+    storage: videoStorage,
+
+    limits: {
+        fileSize: 100 * 1024 * 1024
+    },
+
+    fileFilter: function (req, file, cb) {
+
+        const allowedTypes = [
+            "video/mp4"
+        ];
+
+        if (allowedTypes.includes(file.mimetype)) {
+
+            cb(null, true);
+
+        } else {
+
+            cb(new Error("Only MP4 video files are allowed"));
+
+        }
+
+    }
+
+});
+const uploadTrack = multer({
+
+    storage: trackStorage,
+
+    limits: {
+        fileSize: 15 * 1024 * 1024
+    },
+
+    fileFilter: function (req, file, cb) {
+
+        const allowedTypes = [
+            "audio/mpeg",
+            "audio/mp3",
+            "audio/wav"
+        ];
+
+        if (allowedTypes.includes(file.mimetype)) {
+
+            cb(null, true);
+
+        } else {
+
+            cb(new Error("Only MP3 and WAV audio files are allowed"));
+
+        }
+
+    }
+
+});
 const authRoutes = require("./routes/auth");
 const authMiddleware = require("./middleware/auth");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
 app.use("/api", authRoutes);
@@ -298,7 +401,33 @@ app.get("/api/posts", async (req, res) => {
 
     try {
 
-        const result = await pool.query(`
+        let currentUserId = null;
+
+        const authHeader = req.headers.authorization;
+
+        if (authHeader) {
+
+            try {
+
+                const token = authHeader.split(" ")[1];
+
+                const decoded = jwt.verify(
+                    token,
+                    process.env.JWT_SECRET
+                );
+
+                currentUserId = decoded.id;
+
+            } catch (err) {
+
+                currentUserId = null;
+
+            }
+
+        }
+
+        const result = await pool.query(
+            `
             SELECT
                 posts.id,
                 posts.title,
@@ -306,13 +435,31 @@ app.get("/api/posts", async (req, res) => {
                 posts.image_url,
                 posts.created_at,
                 posts.updated_at,
+                posts.views_count,
                 users.id AS user_id,
-                users.username
+                users.username,
+                COALESCE(likes.likes_count, 0)::integer AS likes_count,
+                EXISTS (
+                    SELECT 1
+                    FROM post_likes
+                    WHERE post_likes.post_id = posts.id
+                    AND post_likes.user_id = $1
+                ) AS liked_by_me
             FROM posts
             JOIN users
                 ON posts.user_id = users.id
+            LEFT JOIN (
+                SELECT
+                    post_id,
+                    COUNT(*) AS likes_count
+                FROM post_likes
+                GROUP BY post_id
+            ) likes
+                ON likes.post_id = posts.id
             ORDER BY posts.created_at DESC
-        `);
+            `,
+            [currentUserId]
+        );
 
         res.json({
 
@@ -321,7 +468,6 @@ app.get("/api/posts", async (req, res) => {
             posts: result.rows
 
         });
-
     } catch (err) {
 
         console.error("GET /api/posts error:", err);
@@ -569,6 +715,1320 @@ app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
     } catch (err) {
 
         console.error("DELETE /api/posts/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+// =====================================
+// INCREMENT POST VIEW
+// =====================================
+
+app.post("/api/posts/:id/view", async (req, res) => {
+
+    try {
+
+        const postId = req.params.id;
+
+        const result = await pool.query(
+            `
+            UPDATE posts
+            SET views_count = views_count + 1
+            WHERE id = $1
+            RETURNING views_count
+            `,
+            [postId]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+
+        }
+
+        res.json({
+
+            success: true,
+            views_count: result.rows[0].views_count
+
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/posts/:id/view error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+// =====================================
+// GET ALL TRACKS
+// =====================================
+
+app.get("/api/tracks", async (req, res) => {
+
+    try {
+
+        let currentUserId = null;
+
+        const authHeader = req.headers.authorization;
+
+        if (authHeader) {
+
+            try {
+
+                const token = authHeader.split(" ")[1];
+
+                const decoded = jwt.verify(
+                    token,
+                    process.env.JWT_SECRET
+                );
+
+                currentUserId = decoded.id;
+
+            } catch (err) {
+
+                currentUserId = null;
+
+            }
+
+        }
+
+        const result = await pool.query(
+            `
+            SELECT
+                tracks.id,
+                tracks.title,
+                tracks.artist,
+                tracks.lyrics,
+                tracks.file_url,
+                tracks.views_count,
+                tracks.created_at,
+                COALESCE(likes.likes_count, 0)::integer AS likes_count,
+                EXISTS (
+                    SELECT 1
+                    FROM track_likes
+                    WHERE track_likes.track_id = tracks.id
+                    AND track_likes.user_id = $1
+                ) AS liked_by_me
+            FROM tracks
+            LEFT JOIN (
+                SELECT
+                    track_id,
+                    COUNT(*) AS likes_count
+                FROM track_likes
+                GROUP BY track_id
+            ) likes
+                ON likes.track_id = tracks.id
+            ORDER BY tracks.created_at DESC
+            `,
+            [currentUserId]
+        );
+
+        res.json({
+            success: true,
+            tracks: result.rows
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/tracks error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// CREATE TRACK (admin only)
+// =====================================
+
+app.post(
+    "/api/tracks",
+    authMiddleware,
+    uploadTrack.single("audio"),
+    async (req, res) => {
+
+    try {
+
+        if (req.user.role !== "admin") {
+
+            return res.status(403).json({
+                success: false,
+                message: "Admin access required"
+            });
+
+        }
+
+        const { title, artist, lyrics } = req.body;
+
+        if (!title || !artist || !req.file) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Title, artist and audio file are required"
+            });
+
+        }
+
+        const fileUrl =
+            `/assets/music/${req.file.filename}`;
+
+        const result = await pool.query(
+            `
+            INSERT INTO tracks
+                (title, artist, lyrics, file_url)
+            VALUES
+                ($1, $2, $3, $4)
+            RETURNING
+                id, title, artist, lyrics, file_url, views_count, created_at
+            `,
+            [
+                title,
+                artist,
+                lyrics || null,
+                fileUrl
+            ]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "Track created",
+            track: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/tracks error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// DELETE TRACK (admin only)
+// =====================================
+
+app.delete("/api/tracks/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        if (req.user.role !== "admin") {
+
+            return res.status(403).json({
+                success: false,
+                message: "Admin access required"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            DELETE FROM tracks
+            WHERE id = $1
+            RETURNING id
+            `,
+            [req.params.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Track not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Track deleted",
+            trackId: result.rows[0].id
+        });
+
+    } catch (err) {
+
+        console.error("DELETE /api/tracks/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+// =====================================
+// INCREMENT TRACK VIEW
+// =====================================
+
+app.post("/api/tracks/:id/view", async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            UPDATE tracks
+            SET views_count = views_count + 1
+            WHERE id = $1
+            RETURNING views_count
+            `,
+            [req.params.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Track not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            views_count: result.rows[0].views_count
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/tracks/:id/view error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// LIKE / UNLIKE TRACK
+// =====================================
+
+app.post("/api/tracks/:id/like", authMiddleware, async (req, res) => {
+
+    try {
+
+        const trackId = req.params.id;
+        const userId = req.user.id;
+
+        const trackCheck = await pool.query(
+            `SELECT id FROM tracks WHERE id = $1`,
+            [trackId]
+        );
+
+        if (trackCheck.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Track not found"
+            });
+
+        }
+
+        const likeCheck = await pool.query(
+            `
+            SELECT id FROM track_likes
+            WHERE track_id = $1 AND user_id = $2
+            `,
+            [trackId, userId]
+        );
+
+        let liked;
+
+        if (likeCheck.rowCount > 0) {
+
+            await pool.query(
+                `
+                DELETE FROM track_likes
+                WHERE track_id = $1 AND user_id = $2
+                `,
+                [trackId, userId]
+            );
+
+            liked = false;
+
+        } else {
+
+            await pool.query(
+                `
+                INSERT INTO track_likes (track_id, user_id)
+                VALUES ($1, $2)
+                `,
+                [trackId, userId]
+            );
+
+            liked = true;
+
+        }
+
+        const countResult = await pool.query(
+            `
+            SELECT COUNT(*)::integer AS likes_count
+            FROM track_likes
+            WHERE track_id = $1
+            `,
+            [trackId]
+        );
+
+        res.json({
+            success: true,
+            liked: liked,
+            likes_count: countResult.rows[0].likes_count
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/tracks/:id/like error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// CREATE TRACK COMMENT
+// =====================================
+
+app.post("/api/tracks/:id/comments", authMiddleware, async (req, res) => {
+
+    try {
+
+        const trackId = req.params.id;
+        const { content } = req.body;
+
+        if (!content || !content.trim()) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Comment content is required"
+            });
+
+        }
+
+        const trackCheck = await pool.query(
+            `SELECT id FROM tracks WHERE id = $1`,
+            [trackId]
+        );
+
+        if (trackCheck.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Track not found"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            INSERT INTO track_comments
+                (track_id, user_id, content)
+            VALUES
+                ($1, $2, $3)
+            RETURNING
+                id, track_id, user_id, content, created_at
+            `,
+            [trackId, req.user.id, content.trim()]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "Comment created",
+            comment: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/tracks/:id/comments error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// GET TRACK COMMENTS
+// =====================================
+
+app.get("/api/tracks/:id/comments", async (req, res) => {
+
+    try {
+
+        const trackId = req.params.id;
+
+        const result = await pool.query(
+            `
+            SELECT
+                track_comments.id,
+                track_comments.track_id,
+                track_comments.user_id,
+                track_comments.content,
+                track_comments.created_at,
+                users.username
+            FROM track_comments
+            JOIN users
+                ON track_comments.user_id = users.id
+            WHERE track_comments.track_id = $1
+            ORDER BY track_comments.created_at ASC
+            `,
+            [trackId]
+        );
+
+        res.json({
+            success: true,
+            comments: result.rows
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/tracks/:id/comments error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// UPDATE TRACK COMMENT
+// =====================================
+
+app.put("/api/track-comments/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const { content } = req.body;
+
+        if (!content || !content.trim()) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Comment content is required"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            UPDATE track_comments
+            SET content = $1
+            WHERE id = $2 AND user_id = $3
+            RETURNING id, track_id, user_id, content, created_at
+            `,
+            [content.trim(), req.params.id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Comment not found or access denied"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Comment updated",
+            comment: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("PUT /api/track-comments/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// DELETE TRACK COMMENT
+// =====================================
+
+app.delete("/api/track-comments/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            DELETE FROM track_comments
+            WHERE id = $1 AND user_id = $2
+            RETURNING id
+            `,
+            [req.params.id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Comment not found or access denied"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Comment deleted",
+            commentId: result.rows[0].id
+        });
+
+    } catch (err) {
+
+        console.error("DELETE /api/track-comments/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+// =====================================
+// GET ALL VIDEOS
+// =====================================
+
+app.get("/api/videos", async (req, res) => {
+
+    try {
+
+        let currentUserId = null;
+
+        const authHeader = req.headers.authorization;
+
+        if (authHeader) {
+
+            try {
+
+                const token = authHeader.split(" ")[1];
+
+                const decoded = jwt.verify(
+                    token,
+                    process.env.JWT_SECRET
+                );
+
+                currentUserId = decoded.id;
+
+            } catch (err) {
+
+                currentUserId = null;
+
+            }
+
+        }
+
+        const result = await pool.query(
+            `
+            SELECT
+                videos.id,
+                videos.title,
+                videos.description,
+                videos.video_url,
+                videos.source_type,
+                videos.views_count,
+                videos.created_at,
+                COALESCE(likes.likes_count, 0)::integer AS likes_count,
+                EXISTS (
+                    SELECT 1
+                    FROM video_likes
+                    WHERE video_likes.video_id = videos.id
+                    AND video_likes.user_id = $1
+                ) AS liked_by_me
+            FROM videos
+            LEFT JOIN (
+                SELECT
+                    video_id,
+                    COUNT(*) AS likes_count
+                FROM video_likes
+                GROUP BY video_id
+            ) likes
+                ON likes.video_id = videos.id
+            ORDER BY videos.created_at DESC
+            `,
+            [currentUserId]
+        );
+
+        res.json({
+            success: true,
+            videos: result.rows
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/videos error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// CREATE VIDEO (admin only)
+// =====================================
+
+app.post(
+    "/api/videos",
+    authMiddleware,
+    uploadVideo.single("video"),
+    async (req, res) => {
+
+    try {
+
+        if (req.user.role !== "admin") {
+
+            return res.status(403).json({
+                success: false,
+                message: "Admin access required"
+            });
+
+        }
+
+        const { title, description, sourceType, youtubeUrl } = req.body;
+
+        if (!title || !sourceType) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Title and source type are required"
+            });
+
+        }
+
+        let videoUrl;
+
+        if (sourceType === "youtube") {
+
+            if (!youtubeUrl || !youtubeUrl.trim()) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: "YouTube URL is required"
+                });
+
+            }
+
+            videoUrl = youtubeUrl.trim();
+
+        } else if (sourceType === "file") {
+
+            if (!req.file) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Video file is required"
+                });
+
+            }
+
+            videoUrl = `/assets/videos/${req.file.filename}`;
+
+        } else {
+
+            return res.status(400).json({
+                success: false,
+                message: "Invalid source type"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            INSERT INTO videos
+                (title, description, video_url, source_type)
+            VALUES
+                ($1, $2, $3, $4)
+            RETURNING
+                id, title, description, video_url, source_type, views_count, created_at
+            `,
+            [
+                title,
+                description || null,
+                videoUrl,
+                sourceType
+            ]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "Video created",
+            video: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/videos error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// DELETE VIDEO (admin only)
+// =====================================
+
+app.delete("/api/videos/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        if (req.user.role !== "admin") {
+
+            return res.status(403).json({
+                success: false,
+                message: "Admin access required"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            DELETE FROM videos
+            WHERE id = $1
+            RETURNING id
+            `,
+            [req.params.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Video not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Video deleted",
+            videoId: result.rows[0].id
+        });
+
+    } catch (err) {
+
+        console.error("DELETE /api/videos/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// INCREMENT VIDEO VIEW
+// =====================================
+
+app.post("/api/videos/:id/view", async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            UPDATE videos
+            SET views_count = views_count + 1
+            WHERE id = $1
+            RETURNING views_count
+            `,
+            [req.params.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Video not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            views_count: result.rows[0].views_count
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/videos/:id/view error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// LIKE / UNLIKE VIDEO
+// =====================================
+
+app.post("/api/videos/:id/like", authMiddleware, async (req, res) => {
+
+    try {
+
+        const videoId = req.params.id;
+        const userId = req.user.id;
+
+        const videoCheck = await pool.query(
+            `SELECT id FROM videos WHERE id = $1`,
+            [videoId]
+        );
+
+        if (videoCheck.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Video not found"
+            });
+
+        }
+
+        const likeCheck = await pool.query(
+            `
+            SELECT id FROM video_likes
+            WHERE video_id = $1 AND user_id = $2
+            `,
+            [videoId, userId]
+        );
+
+        let liked;
+
+        if (likeCheck.rowCount > 0) {
+
+            await pool.query(
+                `
+                DELETE FROM video_likes
+                WHERE video_id = $1 AND user_id = $2
+                `,
+                [videoId, userId]
+            );
+
+            liked = false;
+
+        } else {
+
+            await pool.query(
+                `
+                INSERT INTO video_likes (video_id, user_id)
+                VALUES ($1, $2)
+                `,
+                [videoId, userId]
+            );
+
+            liked = true;
+
+        }
+
+        const countResult = await pool.query(
+            `
+            SELECT COUNT(*)::integer AS likes_count
+            FROM video_likes
+            WHERE video_id = $1
+            `,
+            [videoId]
+        );
+
+        res.json({
+            success: true,
+            liked: liked,
+            likes_count: countResult.rows[0].likes_count
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/videos/:id/like error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// CREATE VIDEO COMMENT
+// =====================================
+
+app.post("/api/videos/:id/comments", authMiddleware, async (req, res) => {
+
+    try {
+
+        const videoId = req.params.id;
+        const { content } = req.body;
+
+        if (!content || !content.trim()) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Comment content is required"
+            });
+
+        }
+
+        const videoCheck = await pool.query(
+            `SELECT id FROM videos WHERE id = $1`,
+            [videoId]
+        );
+
+        if (videoCheck.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Video not found"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            INSERT INTO video_comments
+                (video_id, user_id, content)
+            VALUES
+                ($1, $2, $3)
+            RETURNING
+                id, video_id, user_id, content, created_at
+            `,
+            [videoId, req.user.id, content.trim()]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "Comment created",
+            comment: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/videos/:id/comments error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// GET VIDEO COMMENTS
+// =====================================
+
+app.get("/api/videos/:id/comments", async (req, res) => {
+
+    try {
+
+        const videoId = req.params.id;
+
+        const result = await pool.query(
+            `
+            SELECT
+                video_comments.id,
+                video_comments.video_id,
+                video_comments.user_id,
+                video_comments.content,
+                video_comments.created_at,
+                users.username
+            FROM video_comments
+            JOIN users
+                ON video_comments.user_id = users.id
+            WHERE video_comments.video_id = $1
+            ORDER BY video_comments.created_at ASC
+            `,
+            [videoId]
+        );
+
+        res.json({
+            success: true,
+            comments: result.rows
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/videos/:id/comments error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// UPDATE VIDEO COMMENT
+// =====================================
+
+app.put("/api/video-comments/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const { content } = req.body;
+
+        if (!content || !content.trim()) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Comment content is required"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            UPDATE video_comments
+            SET content = $1
+            WHERE id = $2 AND user_id = $3
+            RETURNING id, video_id, user_id, content, created_at
+            `,
+            [content.trim(), req.params.id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Comment not found or access denied"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Comment updated",
+            comment: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("PUT /api/video-comments/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// DELETE VIDEO COMMENT
+// =====================================
+
+app.delete("/api/video-comments/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            DELETE FROM video_comments
+            WHERE id = $1 AND user_id = $2
+            RETURNING id
+            `,
+            [req.params.id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Comment not found or access denied"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Comment deleted",
+            commentId: result.rows[0].id
+        });
+
+    } catch (err) {
+
+        console.error("DELETE /api/video-comments/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+// =====================================
+// LIKE / UNLIKE POST
+// =====================================
+
+app.post("/api/posts/:id/like", authMiddleware, async (req, res) => {
+
+    try {
+
+        const postId = req.params.id;
+        const userId = req.user.id;
+
+        const postCheck = await pool.query(
+            `
+            SELECT id
+            FROM posts
+            WHERE id = $1
+            `,
+            [postId]
+        );
+
+        if (postCheck.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+
+        }
+
+        const likeCheck = await pool.query(
+            `
+            SELECT id
+            FROM post_likes
+            WHERE post_id = $1
+            AND user_id = $2
+            `,
+            [
+                postId,
+                userId
+            ]
+        );
+
+        let liked;
+
+        if (likeCheck.rowCount > 0) {
+
+            await pool.query(
+                `
+                DELETE FROM post_likes
+                WHERE post_id = $1
+                AND user_id = $2
+                `,
+                [
+                    postId,
+                    userId
+                ]
+            );
+
+            liked = false;
+
+        } else {
+
+            await pool.query(
+                `
+                INSERT INTO post_likes
+                    (post_id, user_id)
+                VALUES
+                    ($1, $2)
+                `,
+                [
+                    postId,
+                    userId
+                ]
+            );
+
+            liked = true;
+
+        }
+
+        const countResult = await pool.query(
+            `
+            SELECT COUNT(*)::integer AS likes_count
+            FROM post_likes
+            WHERE post_id = $1
+            `,
+            [postId]
+        );
+
+        res.json({
+
+            success: true,
+            liked: liked,
+            likes_count: countResult.rows[0].likes_count
+
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/posts/:id/like error:", err);
 
         res.status(500).json({
             success: false,

@@ -1,3 +1,56 @@
+let currentUser = null;
+
+async function loadCurrentUser() {
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+
+        currentUser = null;
+        return;
+
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            currentUser = null;
+            return;
+
+        }
+
+        currentUser =
+            data.user;
+
+    } catch (err) {
+
+        console.error(
+            "Load current user error:",
+            err
+        );
+
+        currentUser = null;
+
+    }
+
+}
+
 async function loadBlogPosts() {
 
     const postsContainer =
@@ -90,6 +143,9 @@ const modalPostImage =
 const modalPostContent =
     document.getElementById("modalPostContent");
 
+const editPostButton =
+    document.getElementById("editPostButton");
+
 const deletePostButton =
     document.getElementById("deletePostButton");
 
@@ -113,9 +169,21 @@ document
 
                 if (!post) return;
 
+                const isAuthor =
+    currentUser &&
+    Number(currentUser.id) === Number(post.user_id);
+
+editPostButton.style.display =
+    isAuthor ? "block" : "none";
+
+deletePostButton.style.display =
+    isAuthor ? "block" : "none";
+
                deletePostButton.dataset.postId =
                    post.id;
 
+               editPostButton.dataset.postId =
+    post.id;
 
                 modalPostTitle.textContent =
                     post.title;
@@ -148,11 +216,23 @@ document
                 postModal.style.display =
                     "flex";
 
+                loadComments(postId);
+
+                const addCommentButton =
+                    document.getElementById("addCommentButton");
+
+                if (addCommentButton) {
+
+                    addCommentButton.onclick = () => {
+                        addComment(postId);
+                    };
+
+                }
+
             }
         );
 
     });
-
 
 if (closePostModal) {
 
@@ -181,6 +261,204 @@ if (postModal) {
 
         }
     );
+
+}
+
+
+if (editPostButton) {
+
+    console.log("🟢 EDIT BUTTON HANDLER ATTACHED");
+
+
+    editPostButton.onclick = async () => {
+
+        console.log("🟢 EDIT BUTTON CLICKED");
+
+
+        const postId =
+            editPostButton.dataset.postId ||
+            deletePostButton.dataset.postId;
+
+        if (!postId) return;
+
+        const token =
+            localStorage.getItem("token");
+
+        if (!token) {
+            alert("Потрібно увійти в акаунт");
+            return;
+        }
+
+        const isEditing =
+            editPostButton.dataset.editing === "true";
+
+
+        // =====================================
+        // START EDITING
+        // =====================================
+
+        if (!isEditing) {
+
+            const post =
+                posts.find(
+                    item =>
+                        Number(item.id) === Number(postId)
+                );
+
+            if (!post) return;
+
+            modalPostTitle.innerHTML = `
+                <input
+                    id="editPostTitle"
+                    type="text"
+                    value="${escapeHtml(post.title)}"
+                    maxlength="200"
+                >
+            `;
+
+            modalPostContent.innerHTML = `
+                <textarea
+                    id="editPostContent"
+                    rows="10"
+                >${escapeHtml(post.content)}</textarea>
+            `;
+
+            editPostButton.dataset.postId =
+                post.id;
+
+            editPostButton.dataset.editing =
+                "true";
+
+            editPostButton.textContent =
+                "💾 Зберегти";
+
+            return;
+        }
+
+
+        // =====================================
+        // SAVE EDIT
+        // =====================================
+
+        const titleInput =
+            document.getElementById("editPostTitle");
+
+        const contentInput =
+            document.getElementById("editPostContent");
+
+        if (!titleInput || !contentInput) return;
+
+
+        const title =
+            titleInput.value.trim();
+
+        const content =
+            contentInput.value.trim();
+
+
+        if (!title || !content) {
+
+            alert(
+                "Заголовок і текст не можуть бути порожніми"
+            );
+
+            return;
+        }
+
+
+        try {
+
+            editPostButton.disabled = true;
+
+            editPostButton.textContent =
+                "⏳ Збереження...";
+
+
+            console.log(
+                "✏️ Updating post:",
+                postId
+            );
+
+
+            const response =
+                await fetch(
+                    `/api/posts/${postId}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${token}`
+                        },
+
+                        body: JSON.stringify({
+                            title,
+                            content
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok || !data.success) {
+
+                throw new Error(
+                    data.message ||
+                    "Не вдалося оновити пост"
+                );
+            }
+
+
+            console.log(
+                "✅ Post updated:",
+                data
+            );
+
+
+            editPostButton.disabled =
+                false;
+
+            editPostButton.dataset.editing =
+                "false";
+
+            editPostButton.textContent =
+                "✏️ Редагувати пост";
+
+
+            await loadBlogPosts();
+
+
+            postModal.style.display =
+                "none";
+
+
+        } catch (err) {
+
+            console.error(
+                "Edit post error:",
+                err
+            );
+
+
+            editPostButton.disabled =
+                false;
+
+            editPostButton.textContent =
+                "💾 Зберегти";
+
+
+            alert(
+                "❌ " + err.message
+            );
+        }
+
+    };
 
 }
 
@@ -307,6 +585,339 @@ if (deletePostButton) {
     }
 }
 
+async function loadComments(postId) {
+
+    const commentsList =
+        document.getElementById("commentsList");
+
+    if (!commentsList) return;
+
+    commentsList.innerHTML =
+        "Завантаження коментарів...";
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/posts/${postId}/comments`
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Не вдалося завантажити коментарі"
+            );
+        }
+
+        const comments =
+            data.comments;
+
+        if (!comments.length) {
+
+            commentsList.innerHTML =
+                "<p>Поки що немає коментарів.</p>";
+
+            return;
+        }
+
+                commentsList.innerHTML =
+            comments.map(comment => {
+
+                const isCommentAuthor =
+                    currentUser &&
+                    Number(currentUser.id) === Number(comment.user_id);
+
+                return `
+                    <div class="comment-item" data-comment-id="${comment.id}">
+                        <div class="comment-meta">
+                            👤 ${escapeHtml(comment.username)}
+                            • 📅 ${formatDate(comment.created_at)}
+                            ${isCommentAuthor ? `
+                                <span class="comment-actions">
+                                    <button type="button" class="comment-edit" data-comment-id="${comment.id}">✏️</button>
+                                    <button type="button" class="comment-delete" data-comment-id="${comment.id}">🗑️</button>
+                                </span>
+                            ` : ""}
+                        </div>
+                        <div class="comment-text">
+                            ${escapeHtml(comment.content)}
+                        </div>
+                    </div>
+                `;
+
+            }).join("");
+
+        commentsList
+            .querySelectorAll(".comment-edit")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+                    startEditComment(
+                        button.dataset.commentId,
+                        postId
+                    );
+                });
+
+            });
+
+        commentsList
+            .querySelectorAll(".comment-delete")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+                    deleteComment(
+                        button.dataset.commentId,
+                        postId
+                    );
+                });
+
+            });
+
+    } catch (err) {
+
+        console.error("Load comments error:", err);
+
+        commentsList.innerHTML =
+            "<p>⚠️ Не вдалося завантажити коментарі.</p>";
+
+    }
+
+}
+
+function startEditComment(commentId, postId) {
+
+    const commentItem =
+        document.querySelector(
+            `.comment-item[data-comment-id="${commentId}"]`
+        );
+
+    if (!commentItem) return;
+
+    const textElement =
+        commentItem.querySelector(".comment-text");
+
+    const currentText =
+        textElement.textContent;
+
+    textElement.innerHTML = `
+        <textarea
+            class="comment-edit-input"
+            rows="2"
+        >${escapeHtml(currentText)}</textarea>
+
+        <div class="comment-edit-actions">
+            <button type="button" class="comment-save-edit">💾 Зберегти</button>
+            <button type="button" class="comment-cancel-edit">✖ Скасувати</button>
+        </div>
+    `;
+
+    textElement
+        .querySelector(".comment-save-edit")
+        .addEventListener("click", () => {
+            saveEditComment(commentId, postId);
+        });
+
+    textElement
+        .querySelector(".comment-cancel-edit")
+        .addEventListener("click", () => {
+            loadComments(postId);
+        });
+
+}
+
+
+async function saveEditComment(commentId, postId) {
+
+    const textarea =
+        document.querySelector(
+            `.comment-item[data-comment-id="${commentId}"] .comment-edit-input`
+        );
+
+    if (!textarea) return;
+
+    const content =
+        textarea.value.trim();
+
+    if (!content) return;
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+        alert("Потрібно увійти в акаунт");
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/comments/${commentId}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${token}`
+                    },
+
+                    body: JSON.stringify({ content })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Не вдалося зберегти коментар"
+            );
+        }
+
+        loadComments(postId);
+
+    } catch (err) {
+
+        console.error("Edit comment error:", err);
+
+        alert(err.message);
+
+    }
+
+}
+
+
+async function deleteComment(commentId, postId) {
+
+    if (!confirm("Видалити цей коментар?")) return;
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+        alert("Потрібно увійти в акаунт");
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/comments/${commentId}`,
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Не вдалося видалити коментар"
+            );
+        }
+
+        loadComments(postId);
+
+    } catch (err) {
+
+        console.error("Delete comment error:", err);
+
+        alert(err.message);
+
+    }
+
+}
+async function addComment(postId) {
+
+    const commentInput =
+        document.getElementById("commentInput");
+
+    const addCommentButton =
+        document.getElementById("addCommentButton");
+
+    if (!commentInput) return;
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+        alert("Потрібно увійти в акаунт");
+        return;
+    }
+
+    const content =
+        commentInput.value.trim();
+
+    if (!content) return;
+
+    try {
+
+        addCommentButton.disabled = true;
+
+        const response =
+            await fetch(
+                `/api/posts/${postId}/comments`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${token}`
+                    },
+
+                    body: JSON.stringify({ content })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Не вдалося додати коментар"
+            );
+        }
+
+        commentInput.value = "";
+
+        loadComments(postId);
+
+    } catch (err) {
+
+        console.error("Add comment error:", err);
+
+        alert(err.message);
+
+    } finally {
+
+        addCommentButton.disabled = false;
+
+    }
+
+}
 function escapeHtml(value) {
 
     const div =
@@ -760,4 +1371,12 @@ loadChatMessages();
 }
 
 
-loadBlogPosts();
+async function initializeBlog() {
+
+    await loadCurrentUser();
+
+    await loadBlogPosts();
+
+}
+
+initializeBlog();
