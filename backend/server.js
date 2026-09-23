@@ -202,14 +202,16 @@ app.get("/api/notes", authMiddleware, async (req, res) => {
         const result = await pool.query(
 
             `
-            SELECT
+                        SELECT
                 id,
                 title,
                 content,
+                note_date,
                 created_at
             FROM notes
             WHERE user_id = $1
-            ORDER BY created_at DESC
+            ORDER BY note_date DESC, created_at DESC
+
             `,
 
             [req.user.id]
@@ -245,21 +247,32 @@ app.post("/api/notes", authMiddleware, async (req, res) => {
 
     try {
 
-        const { title, content } = req.body;
+                const { title, content, note_date } = req.body;
+
+        if (!note_date) {
+
+            return res.status(400).json({
+                success: false,
+                message: "note_date is required"
+            });
+
+        }
 
         await pool.query(
             `
             INSERT INTO notes
-            (user_id, title, content)
+            (user_id, title, content, note_date)
             VALUES
-            ($1, $2, $3)
+            ($1, $2, $3, $4)
             `,
 [
     req.user.id,
     title,
-    content
+    content,
+    note_date
 ]
         );
+
 
         res.json({
             success: true,
@@ -2470,6 +2483,313 @@ app.put("/api/notes/:id", authMiddleware, async (req, res) => {
     } catch (err) {
 
         console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// TASKS
+// =====================================
+
+// GET all tasks
+app.get("/api/tasks", authMiddleware, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            SELECT id, text, task_date, completed, created_at
+            FROM tasks
+            WHERE user_id = $1
+            ORDER BY task_date ASC, created_at ASC
+            `,
+            [req.user.id]
+        );
+
+        res.json({
+            success: true,
+            tasks: result.rows
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/tasks error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// POST new task
+app.post("/api/tasks", authMiddleware, async (req, res) => {
+
+    try {
+
+        const { text, task_date } = req.body;
+
+        if (!text || !task_date) {
+
+            return res.status(400).json({
+                success: false,
+                message: "text and task_date are required"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            INSERT INTO tasks
+                (user_id, text, task_date)
+            VALUES
+                ($1, $2, $3)
+            RETURNING id, text, task_date, completed, created_at
+            `,
+            [req.user.id, text, task_date]
+        );
+
+        res.status(201).json({
+            success: true,
+            task: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/tasks error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// PUT update task (text and/or completed)
+app.put("/api/tasks/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const { text, completed } = req.body;
+
+        const result = await pool.query(
+            `
+            UPDATE tasks
+            SET
+                text = COALESCE($1, text),
+                completed = COALESCE($2, completed)
+            WHERE id = $3
+            AND user_id = $4
+            RETURNING id, text, task_date, completed, created_at
+            `,
+            [
+                text ?? null,
+                typeof completed === "boolean" ? completed : null,
+                req.params.id,
+                req.user.id
+            ]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Task not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            task: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("PUT /api/tasks/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// DELETE task
+app.delete("/api/tasks/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            DELETE FROM tasks
+            WHERE id = $1
+            AND user_id = $2
+            RETURNING id
+            `,
+            [req.params.id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Task not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Task deleted"
+        });
+
+    } catch (err) {
+
+        console.error("DELETE /api/tasks/:id error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// =====================================
+// REMINDERS
+// =====================================
+
+// GET all reminders
+app.get("/api/reminders", authMiddleware, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            SELECT id, text, reminder_date, reminder_time, created_at
+            FROM reminders
+            WHERE user_id = $1
+            ORDER BY reminder_date ASC, reminder_time ASC
+            `,
+            [req.user.id]
+        );
+
+        res.json({
+            success: true,
+            reminders: result.rows
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/reminders error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// POST new reminder
+app.post("/api/reminders", authMiddleware, async (req, res) => {
+
+    try {
+
+        const { text, reminder_date, reminder_time } = req.body;
+
+        if (!text || !reminder_date) {
+
+            return res.status(400).json({
+                success: false,
+                message: "text and reminder_date are required"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            INSERT INTO reminders
+                (user_id, text, reminder_date, reminder_time)
+            VALUES
+                ($1, $2, $3, $4)
+            RETURNING id, text, reminder_date, reminder_time, created_at
+            `,
+            [req.user.id, text, reminder_date, reminder_time || null]
+        );
+
+        res.status(201).json({
+            success: true,
+            reminder: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error("POST /api/reminders error:", err);
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
+// DELETE reminder
+app.delete("/api/reminders/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(
+            `
+            DELETE FROM reminders
+            WHERE id = $1
+            AND user_id = $2
+            RETURNING id
+            `,
+            [req.params.id, req.user.id]
+        );
+
+        if (result.rowCount === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Reminder not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Reminder deleted"
+        });
+
+    } catch (err) {
+
+        console.error("DELETE /api/reminders/:id error:", err);
 
         res.status(500).json({
             success: false,

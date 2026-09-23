@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <title>Notes | Den1mteN Space</title>
 
-<link rel="stylesheet" href="/css/notes.css?v=2">
+<link rel="stylesheet" href="/css/notes.css?v=13">
 
-
-<script src="/js/notes.js"></script>
+<script src="/js/notes.js?v=13" defer></script>
 </head>
 
 <body>
@@ -58,27 +57,33 @@
     <!-- 🫧 GRID -->
     <div class="dashboard">
 
-        <!-- 📝 TASKS -->
-        <div class="block">
+<!-- 🎯 TASKS -->
+<div class="block">
 
-            <h2>📝 Tasks</h2>
+    <h2>🎯 Tasks</h2>
 
-            <div class="task">
-                <strong>finish music page</strong><br>
-                improve atmosphere & visuals
-            </div>
+    <div id="tasksList" class="tasks-list"></div>
 
-            <div class="task">
-                <strong>work on authentication</strong><br>
-                backend stage later
-            </div>
+    <div class="task-form">
 
-            <div class="task">
-                <strong>record demo track</strong><br>
-                creative night session
-            </div>
+        <input
+            id="taskInput"
+            type="text"
+            placeholder="Нова задача..."
+            maxlength="300"
+        >
 
-        </div>
+        <button
+            id="addTaskButton"
+            type="button"
+        >
+            + Додати
+        </button>
+
+    </div>
+
+</div>
+
 
         <!-- 📅 CALENDAR -->
         <div class="block">
@@ -86,6 +91,70 @@
             <h2>📅 Calendar</h2>
 
         <div class="calendar" id="calendar"></div>
+        <div id="selectedDatePanel" class="selected-date-panel">
+
+    <h3 id="selectedDateTitle">
+        Обери день у календарі
+    </h3>
+
+    <div class="note-form">
+
+                <input
+            id="noteTitleInput"
+            type="text"
+            placeholder="Заголовок замітки..."
+            maxlength="200"
+        >
+        <input
+            id="noteInput"
+            type="text"
+            placeholder="Нова замітка..."
+            maxlength="300"
+        >
+
+        <button id="addNoteButton" type="button">
+            + Додати
+        </button>
+
+    </div>
+
+    <div id="notesList" class="notes-list"></div>
+
+<hr>
+
+<h3>⏰ Нагадування</h3>
+
+<div class="reminder-form">
+
+    <input
+        id="reminderTime"
+        type="time"
+    >
+
+    <input
+        id="reminderInput"
+        type="text"
+        placeholder="Нове нагадування..."
+        maxlength="300"
+    >
+
+    <button
+        id="addReminderButton"
+        type="button"
+    >
+        + Додати
+    </button>
+
+</div>
+
+<div
+    id="remindersList"
+    class="reminders-list"
+></div>
+
+
+
+</div>
         </div>
 
         <!-- 🎯 GOALS -->
