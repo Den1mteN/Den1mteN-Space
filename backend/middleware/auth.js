@@ -4,9 +4,6 @@ module.exports = (req, res, next) => {
 
     const authHeader = req.headers.authorization;
 
-    console.log("Authorization header:", authHeader);
-    console.log("JWT_SECRET:", process.env.JWT_SECRET);
-
     if (!authHeader) {
 
         return res.status(401).json({
@@ -18,8 +15,6 @@ module.exports = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    console.log("Token:", token);
-
     try {
 
         const decoded = jwt.verify(
@@ -27,18 +22,27 @@ module.exports = (req, res, next) => {
             process.env.JWT_SECRET
         );
 
-        console.log("Decoded:", decoded);
-
         req.user = decoded;
 
         next();
 
     } catch (err) {
 
-        console.error("JWT ERROR:", err);
+        if (err.name === "TokenExpiredError") {
+
+            return res.status(401).json({
+                success: false,
+                code: "TOKEN_EXPIRED",
+                message: "jwt expired"
+            });
+
+        }
+
+        console.warn("JWT verification failed:", err.name);
 
         return res.status(401).json({
             success: false,
+            code: "TOKEN_INVALID",
             message: err.message
         });
 

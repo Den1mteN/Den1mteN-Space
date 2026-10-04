@@ -147,15 +147,23 @@ body {
 }
 
 /* 🫧 GRID */
+/* 🫧 DASHBOARD GRID */
+
 .dashboard {
-
     display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 30px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    align-items: start;
 }
 
+.dashboard .block {
+    min-width: 0;
+}
+
+.dashboard .block:last-child {
+    grid-column: 1 / -1;
+}
 /* 📦 BLOCK */
 .block {
 
@@ -172,6 +180,61 @@ body {
 
     box-shadow:
         0 0 20px rgba(0,0,0,0.2);
+}
+
+#tasksList {
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.task-game-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin: 28px 0 20px;
+    position: relative;
+}
+
+
+.snake-game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0,0,0,0.15);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.snake-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+#snakeCanvas {
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    max-width: 100%;
+    height: auto;
+}
+
+.snake-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.snake-hint {
+    font-size: 12px;
+    opacity: 0.6;
+    margin: 0;
 }
 
 /* ✨ HOVER */
@@ -288,4 +351,415 @@ body {
     color: #00e5ff;
 
     margin-top: 10px;
+}
+/* =========================
+   CALENDAR
+========================= */
+
+.calendar {
+    margin-top: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.calendar-header strong {
+    font-size: 18px;
+    text-transform: capitalize;
+}
+
+.calendar-header button {
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    transition: 0.2s;
+}
+
+.calendar-header button:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.calendar-weekdays,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.calendar-weekdays {
+    margin-bottom: 6px;
+}
+
+.calendar-weekdays div {
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.55;
+    padding: 5px 0;
+}
+
+.day {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        transform 0.2s;
+}
+
+.day:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.empty-day {
+    background: transparent;
+    cursor: default;
+}
+
+.empty-day:hover {
+    background: transparent;
+    transform: none;
+}
+
+.day.today {
+    background: rgba(255, 255, 255, 0.16);
+    font-weight: bold;
+}
+
+.day.selected {
+    background: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.12);
+}
+
+/* =========================
+   CALENDAR FINAL OVERRIDE
+========================= */
+
+.calendar {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.calendar-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.calendar-weekdays {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 6px;
+    width: 100%;
+}
+
+.calendar-weekdays div {
+    display: block !important;
+    text-align: center;
+    padding: 6px 0;
+}
+
+.calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    gap: 6px;
+    width: 100%;
+}
+
+.calendar-grid .day {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 0;
+    min-height: 42px;
+
+    box-sizing: border-box;
+}
+
+.calendar-grid .empty-day {
+    background: transparent !important;
+}
+
+.calendar-grid .day.today {
+    font-weight: bold;
+}
+
+.calendar-grid .day.selected {
+    font-weight: bold;
+}
+
+/* =========================
+   NOTES CALENDAR — FINAL
+========================= */
+
+#calendar {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Header */
+
+#calendar .calendar-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    width: 100% !important;
+    margin: 0 0 18px 0 !important;
+}
+
+/* Weekdays */
+
+#calendar .calendar-weekdays {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+
+    width: 100% !important;
+    gap: 6px !important;
+
+    margin: 0 0 6px 0 !important;
+}
+
+#calendar .calendar-weekdays div {
+    display: block !important;
+
+    text-align: center !important;
+
+    padding: 6px 0 !important;
+
+    min-width: 0 !important;
+}
+
+/* Days */
+
+#calendar .calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+
+    width: 100% !important;
+    gap: 6px !important;
+}
+
+/* Individual day */
+
+#calendar .calendar-grid .day {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+
+    box-sizing: border-box !important;
+
+    border-radius: 10px !important;
+
+    cursor: pointer !important;
+}
+
+/* Empty cells */
+
+#calendar .calendar-grid .empty-day {
+    background: transparent !important;
+    cursor: default !important;
+}
+
+#calendar .calendar-grid .empty-day:hover {
+    background: transparent !important;
+    transform: none !important;
+}
+
+/* Today */
+
+#calendar .calendar-grid .day.today {
+    font-weight: bold !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* Selected */
+
+#calendar .calendar-grid .day.selected {
+    font-weight: bold !important;
+    background: rgba(255, 255, 255, 0.28) !important;
+}
+
+.note-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    border-left: 3px solid rgba(0, 220, 255, 0.8);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.note-item span {
+    flex: 1;
+    word-break: break-word;
+}
+
+.note-item button {
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.note-item button:hover {
+    color: #ff6b8a;
+}
+
+.calendar-grid .day.has-notes {
+    box-shadow: 0 0 12px rgba(0, 220, 255, 0.35);
+}
+
+#notesList {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid rgba(0, 220, 255, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+#notesList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#notesList::-webkit-scrollbar-thumb {
+    background: rgba(0, 220, 255, 0.4);
+    border-radius: 6px;
+}
+
+.panel-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 16px 0;
+}
+
+.reminder-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.reminder-form input[type="time"] {
+    flex: 0 0 110px;
+}
+
+.reminder-form input[type="text"] {
+    flex: 1;
+}
+
+.reminders-list {
+    box-sizing: border-box;
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid rgba(255, 107, 200, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    border-left: 3px solid rgba(255, 107, 200, 0.8);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.reminder-item .reminder-time {
+    flex-shrink: 0;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.reminder-item span.reminder-text {
+    flex: 1;
+    word-break: break-word;
+}
+
+.reminder-item button {
+    line-height: 1;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 22px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.reminder-item button:hover {
+    color: #ff6b8a;
+}
+
+/* CALENDAR INDICATORS */
+
+.day {
+    position: relative;
+}
+
+.day-indicators {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    line-height: 1;
+}
+
+.note-indicator {
+    color: #00eaff;
+    font-size: 16px;
+}
+
+.reminder-indicator {
+    color: #ffd166;
+    font-size: 16px;
+}
+
+.task-indicator {
+    color: #4ade80;
+    font-size: 16px;
 }
