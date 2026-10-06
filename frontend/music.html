@@ -501,7 +501,142 @@ audio{
     line-height:2;
 }
 
+#addTrackForm input,
+#addTrackForm textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+    margin-top: 10px;
+
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+
+    background: rgba(0,0,0,0.35);
+    color: white;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    outline: none;
+}
+
+#addTrackForm textarea {
+    resize: vertical;
+}
+
+#addTrackForm button {
+    margin-top: 10px;
+}
+
+
+#addVideoForm input,
+#addVideoForm textarea,
+#addVideoForm select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+    margin-top: 10px;
+
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+
+    background: rgba(0,0,0,0.35);
+    color: white;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    outline: none;
+}
+
+#addVideoForm select option {
+    background: #1a1a1a;
+    color: white;
+}
+
+#addVideoForm textarea {
+    resize: vertical;
+}
+
+#addVideoForm button {
+    margin-top: 10px;
+}
+
+
+.fire-grid .track-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.fire-grid .track-meta span {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+.fire-grid .fire-badge {
+    background: rgba(255, 100, 50, 0.2);
+    border: 1px solid rgba(255, 120, 50, 0.5);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-weight: 600;
+    opacity: 1 !important;
+}
+
+.music-edit-form {
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,229,255,0.20);
+    background: rgba(0,0,0,0.25);
+}
+
+.music-edit-form input,
+.music-edit-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+    margin-top: 8px;
+
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+
+    background: rgba(0,0,0,0.35);
+    color: white;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    outline: none;
+}
+
+.music-edit-form textarea {
+    resize: vertical;
+}
+
+.music-edit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.music-edit-actions button {
+    margin-top: 0;
+}
+
 </style>
+
+<script src="/js/music.js?v=8" defer></script>
+<script src="/js/genius.js?v=1" defer></script>
+<script src="/js/session.js?v=1"></script>
+<script src="/js/reminder-watcher.js?v=1"></script>
+    <link rel="stylesheet" href="/css/achievements.css?v=9">
 </head>
 
 <body>
@@ -663,6 +798,10 @@ audio{
 
     <div class="tabs">
 
+        <button onclick="showSection('artist')">
+            👤 Artist
+        </button>
+
         <button onclick="showSection('tracks')">
             🎵 Tracks
         </button>
@@ -675,8 +814,8 @@ audio{
             📝 Lyrics
         </button>
 
-        <button onclick="showSection('artist')">
-            👤 Artist
+        <button onclick="showSection('genius')">
+            🌟 Real Genius
         </button>
 
     </div>
@@ -684,43 +823,54 @@ audio{
     <!-- 🎵 TRACKS -->
 
     <div
-        class="section active"
+        class="section"
         id="tracks">
 
-        <div class="card">
+             <div id="addTrackForm" class="card" style="display:none;">
 
             <div class="track-title">
-
-                Lil Ahil — Бідна моя Україно
-
+                ➕ Додати трек
             </div>
 
-            <audio controls>
+            <input
+                id="newTrackTitle"
+                type="text"
+                placeholder="Назва треку"
+                maxlength="200"
+            >
 
-                <source
-                    src="/assets/music/bidna-moya-ukrayino.mp3"
-                    type="audio/mpeg">
+            <input
+                id="newTrackArtist"
+                type="text"
+                placeholder="Виконавець"
+                maxlength="100"
+            >
 
-            </audio>
+            <textarea
+                id="newTrackLyrics"
+                placeholder="Текст пісні (необов'язково)"
+                rows="4"
+            ></textarea>
+
+            <input
+                id="newTrackFile"
+                type="file"
+                accept="audio/mpeg,audio/wav"
+            >
+
+            <button
+                id="submitNewTrackButton"
+                type="button"
+            >
+                💾 Завантажити трек
+            </button>
+
+            <p id="newTrackStatus"></p>
 
         </div>
 
-        <div class="card">
-
-            <div class="track-title">
-
-                Lil Ahil — Новий реп
-
-            </div>
-
-            <audio controls>
-
-                <source
-                    src="/assets/music/novui_rap.mp3"
-                    type="audio/mpeg">
-
-            </audio>
-
+        <div id="tracksContainer">
+            Завантаження треків...
         </div>
 
     </div>
@@ -731,53 +881,59 @@ audio{
         class="section"
         id="videos">
 
-        <div class="card">
+        <div id="addVideoForm" class="card" style="display:none;">
 
-            <div class="video-frame">
-
-                <iframe
-                    src="https://www.youtube.com/embed/ntV5G6HENhk"
-                    frameborder="0"
-                    allowfullscreen>
-
-                </iframe>
-
+            <div class="track-title">
+                ➕ Додати відео
             </div>
 
-            <div class="video-name">
+            <input
+                id="newVideoTitle"
+                type="text"
+                placeholder="Назва відео"
+                maxlength="200"
+            >
 
-                Official Release
+            <textarea
+                id="newVideoDescription"
+                placeholder="Опис (необов'язково)"
+                rows="3"
+            ></textarea>
 
-            </div>
+            <select id="newVideoSourceType">
+                <option value="file">Завантажити файл (.mp4)</option>
+                <option value="youtube">YouTube посилання</option>
+            </select>
+
+            <input
+                id="newVideoFile"
+                type="file"
+                accept="video/mp4"
+            >
+
+            <input
+                id="newVideoYoutubeUrl"
+                type="text"
+                placeholder="https://www.youtube.com/embed/..."
+                style="display:none;"
+            >
+
+            <button
+                id="submitNewVideoButton"
+                type="button"
+            >
+                💾 Завантажити відео
+            </button>
+
+            <p id="newVideoStatus"></p>
 
         </div>
 
-        <div class="card">
-
-            <div class="video-frame">
-
-                <video
-                    controls
-                    muted>
-
-                    <source
-                        src="/assets/videos/vichluvist.mp4"
-                        type="video/mp4">
-
-                </video>
-
-            </div>
-
-            <div class="video-name">
-
-                Den1mteN — Ввічливість
-
-            </div>
-
+        <div id="videosContainer">
+            Завантаження відео...
         </div>
 
     </div>
-
     <!-- 📝 LYRICS -->
 
     <div
@@ -794,6 +950,7 @@ audio{
 
             <div class="lyrics-box">
 
+
 ТУТ ВСТАВ ТЕКСТ ПІСНІ "ВВІЧЛИВІСТЬ"
 
             </div>
@@ -802,10 +959,96 @@ audio{
 
     </div>
 
-    <!-- 👤 ARTIST -->
+    <!-- 🌟 REAL GENIUS -->
 
     <div
         class="section"
+        id="genius">
+
+    <div class="genius-forms-row">
+        <div id="addGeniusPhotoForm" class="card" style="display:none;">
+
+            <div class="track-title">
+                ➕ Додати фото
+            </div>
+
+            <input
+                id="newGeniusPhotoCaption"
+                type="text"
+                placeholder="Підпис (необов'язково)"
+                maxlength="200"
+            >
+
+            <input
+                id="newGeniusPhotoFile"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+            >
+
+            <button
+                id="submitNewGeniusPhotoButton"
+                type="button"
+            >
+                💾 Завантажити фото
+            </button>
+
+            <p id="newGeniusPhotoStatus"></p>
+
+        </div>
+
+        <div id="addGeniusVideoForm" class="card" style="display:none;">
+
+            <div class="track-title">
+                ➕ Додати відео
+            </div>
+
+            <input
+                id="newGeniusVideoTitle"
+                type="text"
+                placeholder="Назва відео"
+                maxlength="200"
+            >
+
+            <select id="newGeniusVideoSourceType">
+                <option value="file">Завантажити файл (.mp4)</option>
+                <option value="youtube">YouTube посилання</option>
+            </select>
+
+            <input
+                id="newGeniusVideoFile"
+                type="file"
+                accept="video/mp4"
+            >
+
+            <input
+                id="newGeniusVideoYoutubeUrl"
+                type="text"
+                placeholder="https://www.youtube.com/embed/..."
+                style="display:none;"
+            >
+
+            <button
+                id="submitNewGeniusVideoButton"
+                type="button"
+            >
+                💾 Завантажити відео
+            </button>
+
+            <p id="newGeniusVideoStatus"></p>
+
+    </div>
+        </div>
+
+        <div class="genius-gallery" id="geniusGallery">
+            Завантаження...
+        </div>
+
+    </div>
+
+    <!-- 👤 ARTIST -->
+
+    <div
+        class="section active"
         id="artist">
 
         <div class="card">
@@ -814,7 +1057,7 @@ audio{
 
                 <div class="artist-avatar">
 
-                    <img src="/assets/images/den1.jpg">
+                <img src="/assets/images/den1-fun.jpg">
 
                 </div>
 
@@ -834,6 +1077,17 @@ audio{
                         Den1mteN Space.
 
                     </p>
+
+
+
+                    
+                        <a href="https://www.youtube.com/@den1mtenrapofficial"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="artist-youtube-link"
+                    >                    
+                        ▶️ Тисни СЮДИ і потрапиш на мій музичний контент на YouTube</a>
+                    
 
                 </div>
 

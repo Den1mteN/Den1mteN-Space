@@ -1,0 +1,372 @@
+.achv-title {
+  margin: 0 0 14px;
+  color: #00e5ff;
+  font-size: 16px;
+}
+
+.achv-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.achv-button {
+  flex: 1;
+  min-width: 70px;
+  padding: 8px 4px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  color: #cccccc;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.achv-button:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.achv-button.active {
+  background: rgba(0,229,255,0.12);
+  color: #00e5ff;
+  font-weight: bold;
+  border-color: rgba(0,229,255,0.3);
+}
+
+.achv-panel {
+  display: none;
+  padding-top: 14px;
+}
+
+.achv-panel.active {
+  display: block;
+}
+
+.achv-player-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+}
+
+.achv-player-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00e5ff;
+}
+
+.achv-player-stat {
+  margin-top: 4px;
+  color: #cccccc;
+  font-size: 13px;
+}
+
+.achv-table-wrap {
+  overflow-x: auto;
+}
+
+.achv-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #dddddd;
+  font-size: 12px;
+}
+
+.achv-table th, .achv-table td {
+  padding: 6px 7px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+}
+
+.achv-table th {
+  color: #00e5ff;
+  font-weight: normal;
+}
+
+.achv-table td:nth-child(2), .achv-table th:nth-child(2) {
+  text-align: left;
+}
+
+.achv-table input {
+  width: 38px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 6px;
+  color: #ffffff;
+  padding: 3px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.achv-table input[data-field="nickname"] {
+  width: 75px;
+  text-align: left;
+}
+
+.achv-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 3px;
+  opacity: 0.8;
+}
+
+.achv-action-btn:hover {
+  opacity: 1;
+}
+
+.achv-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  color: #dddddd;
+}
+
+.achv-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.achv-add-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 6px;
+}
+
+.achv-add-row input {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.achv-add-row button {
+  background: rgba(0,229,255,0.12);
+  color: #00e5ff;
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.tournaments-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.achv-table-wrap {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.achievement-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.achievement-card .achv-title {
+  font-size: 16px;
+}
+
+.achievement-content {
+  max-height: 300px;
+  overflow-y: auto;
+  color: #cccccc;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.achievement-avatar {
+  width: 100%;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.voting-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.voting-type-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.poll-question {
+  color: #dddddd;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.poll-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.poll-option-media {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(0,229,255,0.08);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.poll-option-label {
+  flex: 1;
+  color: #dddddd;
+  font-size: 13px;
+}
+
+.poll-vote-btn {
+  background: rgba(0,229,255,0.12);
+  color: #00e5ff;
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: not-allowed;
+  font-family: inherit;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.poll-note {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #888888;
+  font-style: italic;
+}
+
+.video-main-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.photo-placeholder-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #888888;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}
+
+.video-section-title {
+  color: #00e5ff;
+  font-size: 18px;
+  margin: 30px 0 10px;
+}
+
+.screens-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin-top: 10px;
+}
+
+.screen-placeholder-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 22px;
+  min-height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888888;
+  font-size: 13px;
+  text-align: center;
+  padding: 16px;
+}
+
+.tabs button:last-child {
+  margin-left: auto;
+}
+
+.genius-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.genius-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.genius-item img,
+.genius-item video {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  background: black;
+}
+
+.genius-item-caption {
+  padding: 10px 12px;
+  color: #dddddd;
+  font-size: 13px;
+}
+
+#geniusGallery {
+  color: #dddddd;
+}
+
+.genius-item-delete {
+  background: rgba(255,80,80,0.15);
+  color: #ff9999;
+  border: none;
+  width: 100%;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.genius-forms-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
