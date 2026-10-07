@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Твій ЗАХИЩЕНИЙ кабінет</title>
 
-<link rel="stylesheet" href="/css/notes.css?v=22">
+<link rel="stylesheet" href="/css/notes.css?v=28">
 
 <script src="/js/notes.js?v=15" defer></script>
 <script src="/js/snake.js?v=1" defer></script>
@@ -194,17 +194,36 @@
         <!-- 🌙 STATUS -->
         <div class="block">
 
-            <h2>🌙 Current Status</h2>
+            <h2>🌙 Information</h2>
 
             <p class="status">
-                late night coding mode active
+                Ось тут, знизу - інструкції з використання функціоналу вкладки!
             </p>
 
             <p>
-                Current focus:
-                creating atmosphere and identity
-                for Den1mteN Space.
+                Контролюй своє життя - застосовуючи заміну твоєї пам'яті на цій сторінці.
             </p>
+
+            <div class="status-hints-wrap">
+                <div class="status-hints" id="statusHints">
+
+                    <div class="status-hint-item">
+                        <img src="/images/замітка.png">
+                        <div class="status-hint-label">📝 Нотатки</div>
+                    </div>
+
+                    <div class="status-hint-item">
+                        <img src="/images/цілі.png">
+                        <div class="status-hint-label">🎯 Цілі</div>
+                    </div>
+
+                    <div class="status-hint-item">
+                        <img src="/images/нагадування.png">
+                        <div class="status-hint-label">⏰ Нагадування</div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
 
@@ -212,5 +231,6 @@
 
 </div>
 
+<script src="/js/status-hints.js?v=2" defer></script>
 </body>
 </html>

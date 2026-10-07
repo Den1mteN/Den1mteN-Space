@@ -40,7 +40,7 @@ body {
 
     background:
         radial-gradient(circle at center,
-        rgba(0,229,255,0.08),
+        rgba(108,92,231,0.08),
         transparent 60%);
 
     z-index: -1;
@@ -62,7 +62,7 @@ body {
         linear-gradient(
             90deg,
             #ffffff,
-            #00e5ff,
+            #6c5ce7,
             #ffffff
         );
 
@@ -73,7 +73,7 @@ body {
 .brand p {
     margin: 0;
 
-    color: #00e5ff;
+    color: #6c5ce7;
 
     font-size: 12px;
 }
@@ -99,7 +99,7 @@ body {
 }
 
 .top-menu a:hover {
-    color: #00e5ff;
+    color: #6c5ce7;
 }
 
 /* 📦 CONTAINER */
@@ -136,7 +136,7 @@ body {
 
     font-size: 42px;
 
-    color: #00e5ff;
+    color: #6c5ce7;
 }
 
 .hero p {
@@ -241,7 +241,7 @@ body {
 .block:hover {
 
     box-shadow:
-        0 0 28px rgba(0,229,255,0.12);
+        0 0 28px rgba(108,92,231,0.12);
 }
 
 /* 📝 TASK */
@@ -256,12 +256,12 @@ body {
     margin-bottom: 14px;
 
     border-left:
-        3px solid #00e5ff;
+        3px solid #6c5ce7;
 }
 
 /* TASK TEXT */
 .task strong {
-    color: #00e5ff;
+    color: #6c5ce7;
 }
 
 /* 📅 CALENDAR */
@@ -297,10 +297,10 @@ body {
 .active-day {
 
     background:
-        rgba(0,229,255,0.18);
+        rgba(108,92,231,0.18);
 
     border:
-        1px solid rgba(0,229,255,0.35);
+        1px solid rgba(108,92,231,0.35);
 }
 
 /* HOVER */
@@ -309,7 +309,7 @@ body {
     transform: scale(1.05);
 
     box-shadow:
-        0 0 15px rgba(0,229,255,0.2);
+        0 0 15px rgba(108,92,231,0.2);
 }
 
 /* 🎯 GOALS */
@@ -340,7 +340,7 @@ body {
     background:
         linear-gradient(
             90deg,
-            #00e5ff,
+            #6c5ce7,
             #00ffaa
         );
 }
@@ -348,7 +348,7 @@ body {
 /* 🌙 STATUS */
 .status {
 
-    color: #00e5ff;
+    color: #6c5ce7;
 
     margin-top: 10px;
 }
@@ -750,7 +750,7 @@ body {
 }
 
 .note-indicator {
-    color: #00eaff;
+    color: #6c5ce7;
     font-size: 16px;
 }
 
@@ -762,4 +762,64 @@ body {
 .task-indicator {
     color: #4ade80;
     font-size: 16px;
+}
+
+/* 🖼️ STATUS HINTS CAROUSEL */
+
+.status-hints-wrap {
+    margin-top: 24px;
+    overflow: hidden;
+    height: 380px;
+}
+
+.status-hints {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 calc(50% - 390px);
+    scrollbar-width: none;
+}
+
+.status-hints::-webkit-scrollbar {
+    display: none;
+}
+
+.status-hint-item {
+    flex: 0 0 320px;
+    scroll-snap-align: center;
+    text-align: center;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.35s ease;
+}
+
+.status-hint-item img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid rgba(108,92,231,0.25);
+    display: block;
+    transition: height 0.35s ease, object-fit 0.1s, background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.status-hint-item.is-centered {
+    opacity: 1;
+}
+
+.status-hint-item.is-centered img {
+    height: 330px;
+    object-fit: contain;
+    background: rgba(0,0,0,0.3);
+    border-color: rgba(108,92,231,0.6);
+    box-shadow: 0 0 24px rgba(108,92,231,0.3);
+}
+
+.status-hint-label {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #aaaaaa;
 }
