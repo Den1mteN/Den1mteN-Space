@@ -588,6 +588,179 @@ app.post(
 );
 
 // =====================================
+
+// UPDATE CHAT MESSAGE — ADMIN ONLY
+app.put(
+    "/api/chat/:id",
+    authMiddleware,
+    async (req, res) => {
+
+        try {
+
+            if (!req.user || req.user.role !== "admin") {
+
+                return res.status(403).json({
+                    success: false,
+                    message: "Admin access required"
+                });
+
+            }
+
+            const messageId =
+                Number(req.params.id);
+
+            const { content } =
+                req.body;
+
+            if (
+                !Number.isInteger(messageId) ||
+                messageId <= 0
+            ) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid message id"
+                });
+
+            }
+
+            if (
+                typeof content !== "string" ||
+                !content.trim()
+            ) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Message cannot be empty"
+                });
+
+            }
+
+            const result =
+                await pool.query(
+                    `
+                    UPDATE chat_messages
+                    SET content = $1
+                    WHERE id = $2
+                    RETURNING
+                        id,
+                        user_id,
+                        content,
+                        created_at
+                    `,
+                    [
+                        content.trim(),
+                        messageId
+                    ]
+                );
+
+            if (result.rowCount === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Message not found"
+                });
+
+            }
+
+            return res.json({
+                success: true,
+                message: "Message updated",
+                chatMessage: result.rows[0]
+            });
+
+        } catch (err) {
+
+            console.error(
+                "PUT /api/chat/:id error:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: "Database error"
+            });
+
+        }
+
+    }
+);
+
+
+// DELETE CHAT MESSAGE — ADMIN ONLY
+app.delete(
+    "/api/chat/:id",
+    authMiddleware,
+    async (req, res) => {
+
+        try {
+
+            if (!req.user || req.user.role !== "admin") {
+
+                return res.status(403).json({
+                    success: false,
+                    message: "Admin access required"
+                });
+
+            }
+
+            const messageId =
+                Number(req.params.id);
+
+            if (
+                !Number.isInteger(messageId) ||
+                messageId <= 0
+            ) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid message id"
+                });
+
+            }
+
+            const result =
+                await pool.query(
+                    `
+                    DELETE FROM chat_messages
+                    WHERE id = $1
+                    RETURNING id
+                    `,
+                    [messageId]
+                );
+
+            if (result.rowCount === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Message not found"
+                });
+
+            }
+
+            return res.json({
+                success: true,
+                message: "Message deleted",
+                messageId: result.rows[0].id
+            });
+
+        } catch (err) {
+
+            console.error(
+                "DELETE /api/chat/:id error:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: "Database error"
+            });
+
+        }
+
+    }
+);
+
 // BLOG POSTS
 // =====================================
 
@@ -2850,6 +3023,66 @@ app.delete("/api/notes/:id", authMiddleware, async (req, res) => {
 });
 
 
+// =====================================
+// NOTES SUMMARY
+// =====================================
+
+app.get("/api/notes/summary", authMiddleware, async (req, res) => {
+
+    try {
+
+        const userId = req.user.id;
+
+        const result = await pool.query(`
+            SELECT
+
+                (
+                    SELECT COUNT(*)
+                    FROM notes
+                    WHERE user_id = $1
+                )::integer AS notes_count,
+
+                (
+                    SELECT COUNT(*)
+                    FROM tasks
+                    WHERE user_id = $1
+                )::integer AS tasks_count,
+
+                (
+                    SELECT COUNT(*)
+                    FROM reminders
+                    WHERE user_id = $1
+                )::integer AS reminders_count,
+
+                (
+                    SELECT COUNT(*)
+                    FROM goals
+                    WHERE user_id = $1
+                )::integer AS goals_count
+
+        `, [userId]);
+
+        return res.json({
+            success: true,
+            stats: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error(
+            "GET /api/notes/summary error:",
+            err
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to load Notes summary"
+        });
+
+    }
+
+});
+
 // =====================================================
 // TASKS// =====================================================
 
@@ -4594,6 +4827,79 @@ app.post("/api/conferences", authMiddleware, async (req, res) => {
 });
 
 
+// DELETE conference (admin only)
+app.delete("/api/conferences/:id", authMiddleware, async (req, res) => {
+
+    try {
+
+        if (req.user.role !== "admin") {
+
+            return res.status(403).json({
+                success: false,
+                message: "Admin only"
+            });
+
+        }
+
+        const conferenceId =
+            Number(req.params.id);
+
+        if (
+            !Number.isInteger(conferenceId) ||
+            conferenceId <= 0
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Invalid conference id"
+            });
+
+        }
+
+        const result = await pool.query(
+            `
+            DELETE FROM conference_rooms
+            WHERE id = $1
+            RETURNING
+                id,
+                name,
+                room_name
+            `,
+            [conferenceId]
+        );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Conference not found"
+            });
+
+        }
+
+        res.json({
+            success: true,
+            message: "Conference deleted",
+            conference: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error(
+            "DELETE /api/conferences/:id error:",
+            err
+        );
+
+        res.status(500).json({
+            success: false,
+            message: "Database error"
+        });
+
+    }
+
+});
+
+
 // =====================================
 // GENIUS PHOTOS (Real Genius tab)
 // =====================================
@@ -4734,6 +5040,176 @@ app.delete("/api/genius-photos/:id", authMiddleware, async (req, res) => {
     }
 
 });
+
+// =====================================
+// DASHBOARD
+// =====================================
+
+app.get("/api/dashboard", authMiddleware, async (req, res) => {
+
+    try {
+
+        const userId = req.user.id;
+
+        // -----------------------------
+        // STATISTICS
+        // -----------------------------
+
+        const statsResult = await pool.query(`
+            SELECT
+
+                (
+                    SELECT COUNT(*)
+                    FROM notes
+                    WHERE user_id = $1
+                )::integer AS notes_count,
+
+                (
+                    SELECT COUNT(*)
+                    FROM forum_posts
+                    WHERE user_id = $1
+                )::integer AS forum_posts_count,
+
+                (
+                    SELECT COUNT(*)
+                    FROM post_likes
+                    JOIN posts
+                        ON posts.id = post_likes.post_id
+                    WHERE posts.user_id = $1
+                )::integer
+                +
+                (
+                    SELECT COUNT(*)
+                    FROM forum_post_likes
+                    JOIN forum_posts
+                        ON forum_posts.id = forum_post_likes.post_id
+                    WHERE forum_posts.user_id = $1
+                )::integer AS likes_count,
+
+                (
+                    SELECT COALESCE(SUM(views_count), 0)
+                    FROM posts
+                    WHERE user_id = $1
+                )::integer AS blog_views
+
+        `, [userId]);
+
+
+        // -----------------------------
+        // LATEST ACTIVITY
+        // -----------------------------
+
+        const activityResult = await pool.query(`
+            SELECT *
+            FROM (
+
+                -- New note
+                SELECT
+                    'note' AS type,
+                    '📝' AS icon,
+                    'Created note' AS action,
+                    title AS item,
+                    created_at
+                FROM notes
+                WHERE user_id = $1
+
+                UNION ALL
+
+                -- New forum topic
+                SELECT
+                    'forum_post' AS type,
+                    '💬' AS icon,
+                    'Created forum topic' AS action,
+                    title AS item,
+                    created_at
+                FROM forum_posts
+                WHERE user_id = $1
+
+                UNION ALL
+
+                -- Comment on Blog
+                SELECT
+                    'comment' AS type,
+                    '💬' AS icon,
+                    'Commented on blog post' AS action,
+                    posts.title AS item,
+                    comments.created_at
+                FROM comments
+                JOIN posts
+                    ON posts.id = comments.post_id
+                WHERE comments.user_id = $1
+
+                UNION ALL
+
+                -- Comment on eFootball forum
+                SELECT
+                    'forum_comment' AS type,
+                    '💬' AS icon,
+                    'Commented on forum topic' AS action,
+                    forum_posts.title AS item,
+                    forum_comments.created_at
+                FROM forum_comments
+                JOIN forum_posts
+                    ON forum_posts.id = forum_comments.post_id
+                WHERE forum_comments.user_id = $1
+
+                UNION ALL
+
+                -- Like received on Blog post
+                SELECT
+                    'post_like' AS type,
+                    '❤️' AS icon,
+                    'Your blog post received a like' AS action,
+                    posts.title AS item,
+                    post_likes.created_at
+                FROM post_likes
+                JOIN posts
+                    ON posts.id = post_likes.post_id
+                WHERE posts.user_id = $1
+
+                UNION ALL
+
+                -- Like received on forum topic
+                SELECT
+                    'forum_like' AS type,
+                    '❤️' AS icon,
+                    'Your forum topic received a like' AS action,
+                    forum_posts.title AS item,
+                    forum_post_likes.created_at
+                FROM forum_post_likes
+                JOIN forum_posts
+                    ON forum_posts.id = forum_post_likes.post_id
+                WHERE forum_posts.user_id = $1
+
+            ) AS activity
+
+            ORDER BY created_at DESC
+            LIMIT 10
+        `, [userId]);
+
+
+        return res.json({
+            success: true,
+
+            stats: statsResult.rows[0],
+
+            activity: activityResult.rows
+
+        });
+
+    } catch (err) {
+
+        console.error("GET /api/dashboard error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to load dashboard"
+        });
+
+    }
+
+});
+
 app.listen(3000, "0.0.0.0", () => {
   console.log("Server running on port 3000");
 });

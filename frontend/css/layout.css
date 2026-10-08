@@ -32,3 +32,30 @@
     font-size: 18px;
     letter-spacing: 2px;
 }
+
+/* 🔥 Найпопулярніший Blog-пост на Home */
+.featured-post {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ⚽ Головна: ряд Music + Найпопулярніша тема форуму */
+.home-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.home-row > section {
+    flex: 1;
+    min-width: 280px;
+}
+
+#popularForumSection {
+    margin-left: 7cm;
+}
+
+#popularForumSection:hover {
+    opacity: 0.85;
+}

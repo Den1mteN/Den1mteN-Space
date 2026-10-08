@@ -36,3 +36,30 @@
 
     box-shadow: 0 0 20px rgba(0,229,255,0.25);
 }
+
+/* Кольори вкладок при наведенні */
+
+.menu a:nth-child(2):hover {
+    background: rgba(255,180,0,0.15);
+    box-shadow: 0 0 20px rgba(255,180,0,0.25);
+}
+
+.menu a:nth-child(3):hover {
+    background: rgba(255,102,255,0.15);
+    box-shadow: 0 0 20px rgba(255,102,255,0.25);
+}
+
+.menu a:nth-child(4):hover {
+    background: rgba(0,255,170,0.15);
+    box-shadow: 0 0 20px rgba(0,255,170,0.25);
+}
+
+.menu a:nth-child(5):hover {
+    background: rgba(255,94,26,0.15);
+    box-shadow: 0 0 20px rgba(255,94,26,0.25);
+}
+
+.menu a:nth-child(6):hover {
+    background: rgba(108,92,231,0.15);
+    box-shadow: 0 0 20px rgba(108,92,231,0.25);
+}

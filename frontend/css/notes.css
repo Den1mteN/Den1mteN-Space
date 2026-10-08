@@ -823,3 +823,69 @@ body {
     font-size: 13px;
     color: #aaaaaa;
 }
+
+/* =====================================
+   NOTES OVERVIEW
+   ===================================== */
+
+.notes-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.overview-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    backdrop-filter: blur(12px);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.overview-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.overview-icon {
+    font-size: 30px;
+}
+
+.overview-label {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+
+.overview-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+
+    .notes-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .notes-overview {
+        grid-template-columns: 1fr;
+    }
+
+}

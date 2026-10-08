@@ -242,7 +242,7 @@ function updateUserPanel() {
 
     panel.innerHTML = `
         <button id="profileButton">
-            👤 ${username}
+            👤 <span class="profile-username">${username}</span>
         </button>
 
         <div id="profileMenuContainer"></div>
@@ -275,4 +275,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateUserPanel();
 
+});
+
+// Повідомлення, якщо сесія закінчилась (див. /js/session.js)
+document.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("sessionExpired")) {
+        sessionStorage.removeItem("sessionExpired");
+        alert("Сесія закінчилась, увійди знову 🙂");
+        if (loginModal) loginModal.style.display = "flex";
+    }
 });

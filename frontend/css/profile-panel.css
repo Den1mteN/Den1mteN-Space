@@ -284,3 +284,77 @@
     font-size:15px;
 
 }
+
+/* ========================= */
+
+#profileButton {
+
+    padding: 14px 32px;
+
+    border: 1px solid rgba(0,255,255,.35);
+
+    background: rgba(15,20,35,.75);
+
+    backdrop-filter: blur(10px);
+
+    color: white;
+
+    font-size: 17px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    clip-path: polygon(
+        10% 0,
+        90% 0,
+        100% 50%,
+        90% 100%,
+        10% 100%,
+        0 50%
+    );
+
+    box-shadow: 0 0 15px rgba(0,255,255,.15);
+
+    transition: .3s;
+
+    animation: profileButtonPulse 3s ease-in-out infinite;
+
+}
+
+#profileButton:hover {
+
+    background: rgba(0,255,255,.15);
+
+    border-color: #00ffff;
+
+    box-shadow:
+        0 0 20px cyan,
+        0 0 40px rgba(0,255,255,.25);
+
+    transform: scale(1.03);
+
+}
+
+
+@keyframes profileButtonPulse {
+
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(0,255,255,.15);
+    }
+
+    50% {
+        box-shadow: 0 0 22px rgba(0,255,255,.35);
+    }
+
+}
+
+#profileButton .profile-username {
+
+    color: #00ffff;
+
+    font-weight: bold;
+
+    text-shadow: 0 0 10px rgba(0,255,255,.6);
+
+}

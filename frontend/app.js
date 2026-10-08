@@ -4,7 +4,8 @@ async function loadFeaturedPost() {
 
         const response = await fetch("/api/posts");
 
-        const posts = await response.json();
+        const data = await response.json();
+        const posts = data.posts;
 
         if (!posts.length) {
 
@@ -15,7 +16,11 @@ async function loadFeaturedPost() {
 
         }
 
-        const post = posts[0];
+        const post = posts.reduce(
+            (mostViewed, current) =>
+                current.views_count > mostViewed.views_count ? current : mostViewed,
+            posts[0]
+        );
 
         document.getElementById("featured-post").innerHTML = `
             <div class="featured-title">
@@ -27,9 +32,16 @@ async function loadFeaturedPost() {
             <p>${post.content}</p>
 
             <div class="views">
-                Category: ${post.category}
+                👁️ ${post.views_count} переглядів
             </div>
         `;
+
+        const featuredSection = document.getElementById("featured-post");
+        featuredSection.style.cursor = "pointer";
+        featuredSection.onclick = () => {
+            window.location.href = `/blog.html#post-${post.id}`;
+        };
+
 
     } catch (err) {
 
@@ -52,42 +64,50 @@ async function loadTracks() {
 
     try {
 
-        const response = await fetch("/api/music/tracks");
+        const response = await fetch("/api/tracks");
 
-        const tracks = await response.json();
+        const data = await response.json();
+
+        const tracks = data.tracks;
 
         if (!tracks.length) {
 
-            document.getElementById("tracks").innerHTML =
-                "<p>No music yet.</p>";
+            document.getElementById("tracks").innerHTML = "<p>No music yet.</p>";
 
             return;
 
         }
 
-        let html = "";
+        const latestTrack = tracks.reduce(
+            (latest, current) =>
+                new Date(current.created_at) > new Date(latest.created_at) ? current : latest,
+            tracks[0]
+        );
 
-        tracks.forEach(track => {
+        document.getElementById("tracks").innerHTML = `
+            <div class="track-card">
 
-            html += `
-                <div class="track-card">
+                <h3>${latestTrack.title}</h3>
 
-                    <h3>${track.title}</h3>
+                <p>${latestTrack.artist}</p>
 
-                    <p>${track.artist}</p>
+                <audio controls preload="none">
+                    <source src="${latestTrack.file_url}" type="audio/mpeg">
+                </audio>
 
-                    <audio controls preload="none">
+            </div>
+        `;
 
-                        <source src="${track.file}" type="audio/mpeg">
-
-                    </audio>
-
-                </div>
-            `;
-
-        });
-
-        document.getElementById("tracks").innerHTML = html;
+        const tracksSection = document.getElementById("tracks").closest("section");
+        if (tracksSection) {
+            tracksSection.style.cursor = "pointer";
+            tracksSection.onclick = (event) => {
+                if (event.target.tagName === "AUDIO" || event.target.tagName === "SOURCE") {
+                    return;
+                }
+                window.location.href = "/music.html";
+            };
+        }
 
     }
 
@@ -103,3 +123,58 @@ async function loadTracks() {
 }
 
 loadTracks();
+
+
+async function loadPopularForumPost() {
+
+    try {
+
+        const response = await fetch("/api/efootball/posts/popular");
+
+        const data = await response.json();
+
+        if (!data.post) {
+
+            document.getElementById("popularForumPost").innerHTML =
+                "<p>Поки що немає тем на форумі.</p>";
+
+            return;
+
+        }
+
+        const post = data.post;
+
+        document.getElementById("popularForumPost").innerHTML = `
+            <div class="featured-title">
+                🔥 MOST DISCUSSED TOPIC
+            </div>
+
+            <h3>${post.title}</h3>
+
+            <p>${post.content}</p>
+
+            <div class="views">
+                👤 ${post.username} · 💬 ${post.comments_count} коментарів
+                (${post.unique_commenters} учасників) · ❤️ ${post.likes_count}
+            </div>
+        `;
+
+        const section = document.getElementById("popularForumSection");
+        if (section) {
+            section.onclick = () => {
+                window.location.href = `/efootball.html#post-${post.id}`;
+            };
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        document.getElementById("popularForumPost").innerHTML =
+            "<p>Не вдалося завантажити тему форуму.</p>";
+
+    }
+
+}
+
+loadPopularForumPost();
