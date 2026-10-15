@@ -7766,7 +7766,7 @@ function buildLaunchSummaryText(rows, isTest) {
         ...lines,
         "",
         "Бали рахувалися за дописи, коментарі, лайки, голоси в опитуваннях і повідомлення в чаті.",
-        "Переможці отримають відзнаку Launch Week.",
+        "Переможці отримають відзнаку «Top Active in Launch Week».",
         "Дякуємо, що ростете разом з Den1mteN Space!"
     ].join("\n");
     return { title, content };
@@ -7825,6 +7825,21 @@ async function checkLaunchSummary() {
 setInterval(checkLaunchSummary, 30 * 1000);
 setTimeout(checkLaunchSummary, 5 * 1000);
 // ===== END LAUNCH SUMMARY =====
+
+// ===== MY BADGES =====
+app.get("/api/my-badges", authMiddleware, async (req, res) => {
+    try {
+        const result = await pool.query(
+            "SELECT badge_key, period_key, place, points, awarded_at FROM user_badges WHERE user_id = $1 ORDER BY awarded_at DESC",
+            [req.user.id]
+        );
+        res.json({ success: true, badges: result.rows });
+    } catch (err) {
+        console.error("GET /api/my-badges error:", err);
+        res.status(500).json({ success: false, message: "Failed to load badges" });
+    }
+});
+// ===== END MY BADGES =====
 
 app.listen(3000, "0.0.0.0", () => {
   console.log("Server running on port 3000");
